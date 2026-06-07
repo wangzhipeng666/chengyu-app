@@ -1,9 +1,9 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Search, Heart, ChevronDown, ChevronUp, BookOpen } from 'lucide-react';
+import { Search, Heart, ChevronDown, ChevronUp, BookOpen, ArrowUp } from 'lucide-react';
 import { useStore } from '../store/useStore';
-import { days, getAllIdioms, getAllWords } from '../data';
-import type { Idiom, Word } from '../types';
+import { loadDays, getAllIdioms, getAllWords } from '../data';
+import type { Idiom, Word, DayData } from '../types';
 
 // ============================================
 // 成语卡片
@@ -93,35 +93,78 @@ export default function DictionaryPage() {
   const { dayId } = useParams();
   const [search, setSearch] = useState('');
   const [activeDay, setActiveDay] = useState(dayId || 'all');
+  const [activeGroup, setActiveGroup] = useState('all');
   const [typeFilter, setTypeFilter] = useState<'all' | 'idiom' | 'word'>('all');
+  const [showBackTop, setShowBackTop] = useState(false);
+  const [showGroupPicker, setShowGroupPicker] = useState(false);
+  const [daysList, setDaysList] = useState<DayData[]>([]);
 
-  const allIdioms = useMemo(() => getAllIdioms(), []);
-  const allWords = useMemo(() => getAllWords(), []);
+  useEffect(() => {
+    loadDays().then(d => setDaysList(d));
+  }, []);
+
+  useEffect(() => {
+    const handler = () => setShowBackTop(window.scrollY > 400);
+    window.addEventListener('scroll', handler, { passive: true });
+    return () => window.removeEventListener('scroll', handler);
+  }, []);
+
+  const allIdioms = useMemo(() => getAllIdioms(), [daysList]);
+  const allWords = useMemo(() => getAllWords(), [daysList]);
+
+  // Collect all groups from filtered days
+  const allGroups = useMemo(() => {
+    const groupSet = new Map<string, string>(); // id -> name
+    for (const day of daysList) {
+      if (activeDay !== 'all' && day.id !== activeDay) continue;
+      for (const group of day.groups) {
+        const hasContent = (group.idioms && group.idioms.length > 0) || (group.words && group.words.length > 0);
+        if (hasContent) groupSet.set(group.id, group.name);
+      }
+    }
+    return Array.from(groupSet.entries()).map(([id, name]) => ({ id, name }));
+  }, [activeDay, daysList]);
 
   const filteredIdioms = useMemo(() => {
     let result = allIdioms;
     if (activeDay !== 'all') result = result.filter(i => i.dayId === activeDay);
+    if (activeGroup !== 'all') result = result.filter(i => {
+      for (const day of daysList) {
+        if (day.id !== i.dayId) continue;
+        const group = day.groups.find(g => g.id === activeGroup);
+        if (group?.idioms?.some(idiom => idiom.id === i.idiom.id)) return true;
+      }
+      return false;
+    });
     if (typeFilter === 'word') return [];
     if (search.trim()) {
       const q = search.trim().toLowerCase();
       result = result.filter(i => i.idiom.name.toLowerCase().includes(q) || i.idiom.meaning.toLowerCase().includes(q) || i.idiom.oneLineSummary.toLowerCase().includes(q));
     }
     return result;
-  }, [allIdioms, activeDay, search, typeFilter]);
+  }, [allIdioms, activeDay, activeGroup, search, typeFilter]);
 
   const filteredWords = useMemo(() => {
     let result = allWords;
     if (activeDay !== 'all') result = result.filter(w => w.dayId === activeDay);
+    if (activeGroup !== 'all') result = result.filter(w => {
+      for (const day of daysList) {
+        if (day.id !== w.dayId) continue;
+        const group = day.groups.find(g => g.id === activeGroup);
+        if (group?.words?.some(word => word.id === w.word.id)) return true;
+      }
+      return false;
+    });
     if (typeFilter === 'idiom') return [];
     if (search.trim()) {
       const q = search.trim().toLowerCase();
       result = result.filter(w => w.word.name.toLowerCase().includes(q) || w.word.meaning.toLowerCase().includes(q) || w.word.oneLineSummary.toLowerCase().includes(q));
     }
     return result;
-  }, [allWords, activeDay, search, typeFilter]);
+  }, [allWords, activeDay, activeGroup, search, typeFilter]);
 
-  const hasIdioms = days.some(d => d.groups.some(g => g.idioms && g.idioms.length > 0));
-  const hasWords = days.some(d => d.groups.some(g => g.words && g.words.length > 0));
+  const hasIdioms = daysList.some(d => d.groups.some(g => g.idioms && g.idioms.length > 0));
+  const hasWords = daysList.some(d => d.groups.some(g => g.words && g.words.length > 0));
 
   return (
     <div className="max-w-lg mx-auto px-4 pt-6 animate-fade-in">
@@ -164,19 +207,50 @@ export default function DictionaryPage() {
 
       {/* Day Tabs */}
       <div className="flex gap-2 overflow-x-auto pb-2 mb-3 scrollbar-hide">
-        <button onClick={() => setActiveDay('all')}
+        <button onClick={() => { setActiveDay('all'); setActiveGroup('all'); }}
           className="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all"
           style={{ background: activeDay === 'all' ? 'var(--color-primary)' : 'var(--color-hairline-light)', color: activeDay === 'all' ? 'var(--color-on-primary)' : 'var(--color-ink-secondary)' }}>
           全部
         </button>
-        {days.map(day => (
-          <button key={day.id} onClick={() => setActiveDay(day.id)}
+        {daysList.map(day => (
+          <button key={day.id} onClick={() => { setActiveDay(day.id); setActiveGroup('all'); }}
             className="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all"
             style={{ background: activeDay === day.id ? 'var(--color-primary)' : 'var(--color-hairline-light)', color: activeDay === day.id ? 'var(--color-on-primary)' : 'var(--color-ink-secondary)' }}>
             {day.label}
           </button>
         ))}
       </div>
+
+      {/* Group Filter */}
+      {allGroups.length > 1 && (
+        <div className="mb-3">
+          <button
+            onClick={() => setShowGroupPicker(!showGroupPicker)}
+            className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-all w-full text-left"
+            style={{ background: 'var(--color-canvas-warm)', border: '1px solid var(--color-hairline-light)', color: activeGroup !== 'all' ? 'var(--color-accent)' : 'var(--color-ink-secondary)' }}
+          >
+            <span className="text-xs opacity-60">分组</span>
+            <span className="flex-1 truncate">{activeGroup === 'all' ? '全部分组' : allGroups.find(g => g.id === activeGroup)?.name?.replace(/[""]/g, '')}</span>
+            <ChevronDown size={14} style={{ transform: showGroupPicker ? 'rotate(180deg)' : '', transition: 'transform 0.2s' }} />
+          </button>
+          {showGroupPicker && (
+            <div className="mt-2 p-2 rounded-xl grid grid-cols-2 gap-1.5 animate-slide-up" style={{ background: 'var(--color-canvas-card)', border: '1px solid var(--color-hairline-light)', boxShadow: 'var(--shadow-md)' }}>
+              <button onClick={() => { setActiveGroup('all'); setShowGroupPicker(false); }}
+                className="px-3 py-2 rounded-lg text-xs font-medium text-left transition-all"
+                style={{ background: activeGroup === 'all' ? 'var(--color-accent)' : 'transparent', color: activeGroup === 'all' ? 'white' : 'var(--color-ink-secondary)' }}>
+                全部分组
+              </button>
+              {allGroups.map(g => (
+                <button key={g.id} onClick={() => { setActiveGroup(g.id); setShowGroupPicker(false); }}
+                  className="px-3 py-2 rounded-lg text-xs font-medium text-left transition-all truncate"
+                  style={{ background: activeGroup === g.id ? 'var(--color-accent)' : 'transparent', color: activeGroup === g.id ? 'white' : 'var(--color-ink-secondary)' }}>
+                  {g.name.replace(/[""]/g, '')}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Type Tabs */}
       {(hasIdioms && hasWords) && (
@@ -215,6 +289,17 @@ export default function DictionaryPage() {
           </>
         )}
       </div>
+
+      {/* Back to top button */}
+      {showBackTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="fixed bottom-24 right-5 w-11 h-11 rounded-full flex items-center justify-center shadow-lg transition-all animate-fade-in"
+          style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary)', zIndex: 40 }}
+        >
+          <ArrowUp size={20} />
+        </button>
+      )}
     </div>
   );
 }

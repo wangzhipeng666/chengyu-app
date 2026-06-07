@@ -1,7 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Heart, ChevronDown, ChevronUp, HeartOff } from 'lucide-react';
 import { useStore } from '../store/useStore';
-import { days, getAllIdioms, getAllWords } from '../data';
+import { loadDays, getAllIdioms, getAllWords } from '../data';
+import type { DayData } from '../types';
 
 function FavoriteCard({ name, pronunciation, meaning, dayLabel, itemType, onRemove, children }: {
   name: string; pronunciation?: string; meaning: string; dayLabel: string; itemType: string; onRemove: () => void; children?: React.ReactNode;
@@ -40,12 +41,17 @@ function FavoriteCard({ name, pronunciation, meaning, dayLabel, itemType, onRemo
 
 export default function FavoritesPage() {
   const { favorites, removeFavorite } = useStore();
+  const [daysList, setDaysList] = useState<DayData[]>([]);
 
-  const allIdioms = useMemo(() => getAllIdioms(), []);
-  const allWords = useMemo(() => getAllWords(), []);
+  useEffect(() => {
+    loadDays().then(d => setDaysList(d));
+  }, []);
+
+  const allIdioms = useMemo(() => getAllIdioms(), [daysList]);
+  const allWords = useMemo(() => getAllWords(), [daysList]);
 
   const favoriteItems = favorites.map(f => {
-    const day = days.find(d => d.id === f.dayId);
+    const day = daysList.find(d => d.id === f.dayId);
     if (f.itemType === 'idiom') {
       const found = allIdioms.find(i => i.dayId === f.dayId && i.idiom.id === f.itemId);
       return found ? { ...found, itemType: 'idiom' as const, dayLabel: day?.label || f.dayId } : null;

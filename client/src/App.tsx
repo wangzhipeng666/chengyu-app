@@ -91,6 +91,14 @@ function SideNav() {
   );
 }
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
+
 function AppLayout() {
   const location = useLocation();
   const isDesktop = useIsDesktop();
@@ -99,6 +107,7 @@ function AppLayout() {
   if (isDesktop) {
     return (
       <div className="desktop-layout">
+        <ScrollToTop />
         <SideNav />
         <div className="desktop-content">
           <Routes>
@@ -116,6 +125,7 @@ function AppLayout() {
 
   return (
     <>
+      <ScrollToTop />
       <div className="min-h-screen pb-16" style={{ background: 'var(--color-canvas)' }}>
         <Routes>
           <Route path="/" element={<HomePage />} />

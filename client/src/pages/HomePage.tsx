@@ -1,10 +1,17 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useStore } from '../store/useStore';
-import { days } from '../data';
+import { loadDays } from '../data';
 import { Flame, Target, BookOpen, AlertCircle, ChevronRight, CheckCircle } from 'lucide-react';
+import type { DayData } from '../types';
 
 export default function HomePage() {
   const { todayCorrect, todayTotal, streak, wrongQuestions, getDayProgress } = useStore();
+  const [days, setDays] = useState<DayData[]>([]);
+
+  useEffect(() => {
+    loadDays().then(d => setDays(d));
+  }, []);
 
   const accuracy = todayTotal > 0 ? Math.round((todayCorrect / todayTotal) * 100) : 0;
 
@@ -84,9 +91,9 @@ export default function HomePage() {
         <div className="space-y-3">
           {days.map(day => {
             const progress = getDayProgress(day.id);
-            const totalIdioms = day.groups.reduce((sum, g) => sum + (g.idioms?.length || 0), 0);
-            const totalWords = day.groups.reduce((sum, g) => sum + (g.words?.length || 0), 0);
-            const totalQuizzes = day.quizzes.length;
+            const totalIdioms = day.groups?.reduce((sum, g) => sum + (g.idioms?.length || 0), 0) || 0;
+            const totalWords = day.groups?.reduce((sum, g) => sum + (g.words?.length || 0), 0) || 0;
+            const totalQuizzes = day.quizzes?.length || 0;
 
             return (
               <Link

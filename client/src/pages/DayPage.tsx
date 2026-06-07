@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
-  ArrowLeft, ChevronDown, ChevronUp, Heart, Check, X,
+  ArrowLeft, ArrowUp, ChevronDown, ChevronUp, Heart, Check, X,
   Shuffle, RotateCcw, BookOpen, FileText
 } from 'lucide-react';
 import { useStore, quizKey } from '../store/useStore';
 import { getDay } from '../data';
-import type { Idiom, Word, Quiz } from '../types';
+import type { Idiom, Word, Quiz, DayData } from '../types';
 
 // ============================================
 // 成语卡片
@@ -401,8 +401,20 @@ export default function DayPage() {
   const { markDayLearned } = useStore();
   const [activeTab, setActiveTab] = useState<'notes' | 'quiz'>('notes');
   const [typeFilter, setTypeFilter] = useState<'all' | 'idiom' | 'word'>('all');
+  const [showBackTop, setShowBackTop] = useState(false);
+  const [day, setDay] = useState<DayData | undefined>(undefined);
 
-  const day = dayId ? getDay(dayId) : undefined;
+  useEffect(() => {
+    const handler = () => setShowBackTop(window.scrollY > 400);
+    window.addEventListener('scroll', handler, { passive: true });
+    return () => window.removeEventListener('scroll', handler);
+  }, []);
+
+  useEffect(() => {
+    if (dayId) {
+      getDay(dayId).then(d => setDay(d));
+    }
+  }, [dayId]);
 
   useEffect(() => {
     if (day) markDayLearned(day.id);
@@ -498,8 +510,11 @@ export default function DayPage() {
           )}
 
           {day.summary && (
-            <div className="card-accent p-4">
-              <div className="text-sm font-medium mb-1" style={{ color: 'var(--color-accent)' }}>学习小结</div>
+            <div className="p-4 rounded-2xl mb-2" style={{ background: 'linear-gradient(135deg, var(--color-accent-soft) 0%, var(--color-primary-soft) 100%)', border: '1px solid rgba(45, 139, 94, 0.12)' }}>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-base"> </span>
+                <span className="text-sm font-semibold" style={{ color: 'var(--color-accent)' }}>今日学习小结</span>
+              </div>
               <p className="text-sm leading-relaxed" style={{ color: 'var(--color-ink-secondary)' }}>{day.summary}</p>
             </div>
           )}
@@ -516,8 +531,12 @@ export default function DayPage() {
                 ))}
               </div>
               {group.summary && (
-                <div className="mt-2 p-3 rounded-lg text-sm" style={{ background: 'var(--color-primary-soft)', color: 'var(--color-ink-secondary)' }}>
-                  {group.summary}
+                <div className="mt-3 p-4 rounded-xl" style={{ background: 'var(--color-canvas-warm)', border: '1px solid var(--color-hairline-light)' }}>
+                  <div className="flex items-center gap-1.5 mb-1.5">
+                    <span className="text-xs"> </span>
+                    <span className="text-xs font-semibold" style={{ color: 'var(--color-primary)' }}>小结</span>
+                  </div>
+                  <p className="text-sm leading-relaxed" style={{ color: 'var(--color-ink-secondary)' }}>{group.summary}</p>
                 </div>
               )}
             </div>
@@ -530,6 +549,17 @@ export default function DayPage() {
         <div className="pb-20">
           <QuizSection dayId={day.id} quizzes={day.quizzes} />
         </div>
+      )}
+
+      {/* Back to top button */}
+      {showBackTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="fixed bottom-24 right-5 w-11 h-11 rounded-full flex items-center justify-center shadow-lg transition-all animate-fade-in"
+          style={{ background: 'var(--color-primary)', color: 'var(--color-on-primary)', zIndex: 40 }}
+        >
+          <ArrowUp size={20} />
+        </button>
       )}
     </div>
   );

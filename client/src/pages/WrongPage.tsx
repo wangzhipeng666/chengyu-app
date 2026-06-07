@@ -1,15 +1,22 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Trash2, RotateCcw, AlertCircle, ChevronRight } from 'lucide-react';
 import { useStore } from '../store/useStore';
-import { days } from '../data';
+import { loadDays } from '../data';
+import type { DayData } from '../types';
 
 export default function WrongPage() {
   const { wrongQuestions, removeWrongQuestion, clearWrongQuestions } = useStore();
+  const [daysList, setDaysList] = useState<DayData[]>([]);
+
+  useEffect(() => {
+    loadDays().then(d => setDaysList(d));
+  }, []);
 
   // 按天分组错题
   const wrongByDay = wrongQuestions
     .map(wq => {
-      const day = days.find(d => d.id === wq.dayId);
+      const day = daysList.find(d => d.id === wq.dayId);
       const quiz = day?.quizzes.find(q => q.id === wq.quizId);
       return { ...wq, day, quiz };
     })
@@ -53,7 +60,7 @@ export default function WrongPage() {
         <div className="space-y-4 pb-20">
           <div className="text-sm" style={{ color: 'var(--color-ink-muted)' }}>共 {wrongQuestions.length} 道错题</div>
           {Object.entries(groupedByDay).map(([dayId, items]) => {
-            const day = days.find(d => d.id === dayId);
+            const day = daysList.find(d => d.id === dayId);
             return (
               <div key={dayId}>
                 <div className="text-xs font-medium mb-2 px-1" style={{ color: 'var(--color-ink-muted)' }}>{day?.label || dayId}</div>

@@ -1,18 +1,52 @@
-import day1 from './day-1.json';
-import day2 from './day-2.json';
-import day3 from './day-3.json';
 import type { DayData, Idiom, Word } from '../types';
+import * as api from '../api';
 
-// Cast JSON imports to satisfy TypeScript (JSON inference doesn't perfectly match our types)
-export const days: DayData[] = [day1 as DayData, day2 as DayData, day3 as DayData];
+// In-memory cache
+let cachedDays: DayData[] | null = null;
+let cachedDaysMap: Map<string, DayData> = new Map();
 
-export function getDay(id: string): DayData | undefined {
-  return days.find(d => d.id === id);
+export async function loadDays(): Promise<DayData[]> {
+  if (cachedDays) return cachedDays;
+  const daysList = await api.fetchDays();
+  // Load full data for each day
+  const days: DayData[] = [];
+  for (const d of daysList) {
+    const full = await api.fetchDay(d.id);
+    days.push(full);
+    cachedDaysMap.set(d.id, full);
+  }
+  cachedDays = days;
+  return days;
 }
 
+export function getDaysFromCache(): DayData[] {
+  return cachedDays || [];
+}
+
+export function getDayFromCache(id: string): DayData | undefined {
+  return cachedDaysMap.get(id);
+}
+
+export async function getDay(id: string): Promise<DayData | undefined> {
+  if (cachedDaysMap.has(id)) return cachedDaysMap.get(id);
+  try {
+    const day = await api.fetchDay(id);
+    cachedDaysMap.set(id, day);
+    return day;
+  } catch {
+    return undefined;
+  }
+}
+
+export async function searchItems(q: string, day?: string, type?: string) {
+  return api.searchItems(q, day, type);
+}
+
+// Legacy sync exports (for components that need immediate access)
+// These return empty arrays until data is loaded
 export function getAllIdioms(): { idiom: Idiom; dayId: string; groupName: string }[] {
   const result: { idiom: Idiom; dayId: string; groupName: string }[] = [];
-  for (const day of days) {
+  for (const day of cachedDays || []) {
     for (const group of day.groups) {
       if (group.idioms) {
         for (const idiom of group.idioms) {
@@ -26,7 +60,7 @@ export function getAllIdioms(): { idiom: Idiom; dayId: string; groupName: string
 
 export function getAllWords(): { word: Word; dayId: string; groupName: string }[] {
   const result: { word: Word; dayId: string; groupName: string }[] = [];
-  for (const day of days) {
+  for (const day of cachedDays || []) {
     for (const group of day.groups) {
       if (group.words) {
         for (const word of group.words) {
@@ -40,7 +74,7 @@ export function getAllWords(): { word: Word; dayId: string; groupName: string }[
 
 export function getAllQuizzes() {
   const result: { quiz: DayData['quizzes'][number]; dayId: string }[] = [];
-  for (const day of days) {
+  for (const day of cachedDays || []) {
     for (const quiz of day.quizzes) {
       result.push({ quiz, dayId: day.id });
     }
