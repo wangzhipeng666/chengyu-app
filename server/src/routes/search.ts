@@ -29,10 +29,10 @@ router.get('/', (req, res) => {
     }
     idioms = db.prepare(sql).all(...params).map((i: any) => ({
       ...i,
+      oneLineSummary: i.one_line_summary,
       collocations: JSON.parse(i.collocations || '[]'),
       examples: JSON.parse(i.examples || '[]'),
       synonyms: JSON.parse(i.synonyms || '[]'),
-      confusing: JSON.parse(i.confusing || '[]'),
     }));
   }
 
@@ -45,10 +45,11 @@ router.get('/', (req, res) => {
     }
     words = db.prepare(sql).all(...params).map((w: any) => ({
       ...w,
+      oneLineSummary: w.one_line_summary,
+      usageContext: w.usage_context,
       examples: JSON.parse(w.examples || '[]'),
       analysisAngles: JSON.parse(w.analysis_angles || '[]'),
       synonyms: JSON.parse(w.synonyms || '[]'),
-      confusing: JSON.parse(w.confusing || '[]'),
     }));
   }
 

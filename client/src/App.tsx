@@ -6,6 +6,7 @@ import DayPage from './pages/DayPage';
 import DictionaryPage from './pages/DictionaryPage';
 import WrongPage from './pages/WrongPage';
 import FavoritesPage from './pages/FavoritesPage';
+import PdfPage from './pages/PdfPage';
 import './App.css';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
@@ -117,6 +118,7 @@ function AppLayout() {
             <Route path="/dictionary/:dayId" element={<DictionaryPage />} />
             <Route path="/wrong" element={<WrongPage />} />
             <Route path="/favorites" element={<FavoritesPage />} />
+            <Route path="/pdf/:dayId" element={<PdfPage />} />
           </Routes>
         </div>
       </div>

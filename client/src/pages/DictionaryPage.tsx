@@ -21,7 +21,7 @@ function IdiomCard({ idiom, dayId }: { idiom: Idiom; dayId: string }) {
             <h3 className="text-lg font-bold" style={{ color: 'var(--color-ink)', fontFamily: 'var(--fontFamilySerif)' }}>{idiom.name}</h3>
             {idiom.pronunciation && <span className="text-xs" style={{ color: 'var(--color-ink-muted)' }}>{idiom.pronunciation}</span>}
           </div>
-          <p className="text-sm mt-1 line-clamp-2" style={{ color: 'var(--color-ink-secondary)' }}>{idiom.meaning}</p>
+          <p className="text-sm mt-1" style={{ color: 'var(--color-ink-secondary)' }}>{idiom.meaning}</p>
         </div>
         <div className="flex items-center gap-2 ml-2">
           <button onClick={(e) => { e.stopPropagation(); fav ? removeFavorite(dayId, idiom.id) : addFavorite(dayId, idiom.id, 'idiom'); }}
@@ -38,7 +38,6 @@ function IdiomCard({ idiom, dayId }: { idiom: Idiom; dayId: string }) {
           {idiom.structure && <div><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>结构特点</div><div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{idiom.structure}</div></div>}
           {idiom.collocations && idiom.collocations.length > 0 && <div><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>常见搭配</div><div className="flex flex-wrap gap-1">{idiom.collocations.map((col, i) => <span key={i} className="tag tag-primary">{col}</span>)}</div></div>}
           {idiom.examples && idiom.examples.length > 0 && <div><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>例句</div><ul className="space-y-1">{idiom.examples.map((ex, i) => <li key={i} className="text-sm leading-relaxed pl-3" style={{ color: 'var(--color-ink-secondary)', borderLeft: '2px solid var(--color-gold)' }}>{ex}</li>)}</ul></div>}
-          {idiom.confusing && idiom.confusing.length > 0 && <div><div className="text-xs font-medium mb-2" style={{ color: 'var(--color-ink-muted)' }}>易混淆成语</div><div className="space-y-1">{idiom.confusing.map((c, i) => <div key={i} className="rounded-lg p-2 text-sm" style={{ background: 'var(--color-error-soft)', color: 'var(--color-error)' }}>{c}</div>)}</div></div>}
           <div className="rounded-lg p-3" style={{ background: 'var(--color-warning-soft)' }}><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-warning)' }}>记忆口诀</div><div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{idiom.tip}</div></div>
           <div className="rounded-lg p-3" style={{ background: 'var(--color-hairline-light)' }}><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>一句话总结</div><div className="text-sm font-medium" style={{ color: 'var(--color-ink)' }}>{idiom.oneLineSummary}</div></div>
         </div>
@@ -63,7 +62,7 @@ function WordCard({ word, dayId }: { word: Word; dayId: string }) {
             <h3 className="text-lg font-bold" style={{ color: 'var(--color-ink)', fontFamily: 'var(--fontFamilySerif)' }}>{word.name}</h3>
             {word.pronunciation && <span className="text-xs" style={{ color: 'var(--color-ink-muted)' }}>{word.pronunciation}</span>}
           </div>
-          <p className="text-sm mt-1 line-clamp-2" style={{ color: 'var(--color-ink-secondary)' }}>{word.meaning}</p>
+          <p className="text-sm mt-1" style={{ color: 'var(--color-ink-secondary)' }}>{word.meaning}</p>
         </div>
         <div className="flex items-center gap-2 ml-2">
           <button onClick={(e) => { e.stopPropagation(); fav ? removeFavorite(dayId, word.id) : addFavorite(dayId, word.id, 'word'); }}

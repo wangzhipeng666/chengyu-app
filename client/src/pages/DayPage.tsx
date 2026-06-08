@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
   ArrowLeft, ArrowUp, ChevronDown, ChevronUp, Heart, Check, X,
-  Shuffle, RotateCcw, BookOpen, FileText
+  Shuffle, RotateCcw, BookOpen, FileText, FileDown
 } from 'lucide-react';
 import { useStore, quizKey } from '../store/useStore';
 import { getDay } from '../data';
@@ -28,7 +28,7 @@ function IdiomCard({ idiom, dayId }: { idiom: Idiom; dayId: string }) {
               <span className="text-xs" style={{ color: 'var(--color-ink-muted)' }}>{idiom.pronunciation}</span>
             )}
           </div>
-          <p className="text-sm mt-1 line-clamp-2" style={{ color: 'var(--color-ink-secondary)' }}>
+          <p className="text-sm mt-1" style={{ color: 'var(--color-ink-secondary)' }}>
             {idiom.meaning}
           </p>
         </div>
@@ -87,18 +87,6 @@ function IdiomCard({ idiom, dayId }: { idiom: Idiom; dayId: string }) {
               </ul>
             </div>
           )}
-          {idiom.confusing && idiom.confusing.length > 0 && (
-            <div>
-              <div className="text-xs font-medium mb-2" style={{ color: 'var(--color-ink-muted)' }}>易混淆成语</div>
-              <div className="space-y-1">
-                {idiom.confusing.map((c, i) => (
-                  <div key={i} className="rounded-lg p-2 text-sm" style={{ background: 'var(--color-error-soft)', color: 'var(--color-error)' }}>
-                    {c}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
           <div className="rounded-lg p-3" style={{ background: 'var(--color-warning-soft)' }}>
             <div className="text-xs font-medium mb-1" style={{ color: 'var(--color-warning)' }}>记忆口诀</div>
             <div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{idiom.tip}</div>
@@ -133,7 +121,7 @@ function WordCard({ word, dayId }: { word: Word; dayId: string }) {
               <span className="text-xs" style={{ color: 'var(--color-ink-muted)' }}>{word.pronunciation}</span>
             )}
           </div>
-          <p className="text-sm mt-1 line-clamp-2" style={{ color: 'var(--color-ink-secondary)' }}>
+          <p className="text-sm mt-1" style={{ color: 'var(--color-ink-secondary)' }}>
             {word.meaning}
           </p>
         </div>
@@ -452,7 +440,14 @@ export default function DayPage() {
         <h1 className="text-lg font-bold" style={{ color: 'var(--color-ink)', fontFamily: 'var(--fontFamilySerif)' }}>
           {day.label}
         </h1>
-        <div className="w-16" />
+        <button
+          onClick={() => navigate(`/pdf/${day.id}`)}
+          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
+          style={{ background: 'var(--color-primary-soft)', color: 'var(--color-primary)' }}
+        >
+          <FileDown size={14} />
+          笔记
+        </button>
       </div>
 
       {/* Tabs */}

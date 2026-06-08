@@ -43,18 +43,19 @@ router.get('/:id', (req, res) => {
   // Parse JSON fields
   const parseIdiom = (i: any) => ({
     ...i,
+    oneLineSummary: i.one_line_summary,
     collocations: JSON.parse(i.collocations || '[]'),
     examples: JSON.parse(i.examples || '[]'),
     synonyms: JSON.parse(i.synonyms || '[]'),
-    confusing: JSON.parse(i.confusing || '[]'),
   });
 
   const parseWord = (w: any) => ({
     ...w,
+    oneLineSummary: w.one_line_summary,
+    usageContext: w.usage_context,
     examples: JSON.parse(w.examples || '[]'),
     analysisAngles: JSON.parse(w.analysis_angles || '[]'),
     synonyms: JSON.parse(w.synonyms || '[]'),
-    confusing: JSON.parse(w.confusing || '[]'),
   });
 
   const parseQuiz = (q: any) => ({

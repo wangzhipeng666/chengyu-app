@@ -8,7 +8,7 @@ let db: Database.Database;
 export function getDb(): Database.Database {
   if (!db) {
     db = new Database(DB_PATH);
-    db.pragma('journal_mode = WAL');
+    db.pragma('journal_mode = DELETE');
     db.pragma('foreign_keys = ON');
     initSchema();
   }
@@ -46,7 +46,6 @@ function initSchema() {
       structure TEXT,
       examples TEXT,           -- JSON array
       synonyms TEXT,           -- JSON array
-      confusing TEXT,          -- JSON array
       tip TEXT,
       one_line_summary TEXT,
       source TEXT,
@@ -67,7 +66,6 @@ function initSchema() {
       notes TEXT,
       analysis_angles TEXT,    -- JSON array of {dimension, description}
       synonyms TEXT,           -- JSON array
-      confusing TEXT,          -- JSON array
       one_line_summary TEXT,
       PRIMARY KEY (id, day_id),
       FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE,

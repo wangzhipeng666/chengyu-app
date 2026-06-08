@@ -23,12 +23,12 @@ function seed() {
   db.exec('DELETE FROM groups');
   db.exec('DELETE FROM days');
 
-  const dayFiles = ['day-1.json', 'day-2.json', 'day-3.json'];
+  const dayFiles = ['day-1.json', 'day-2.json', 'day-3.json', 'day-4.json'];
 
   const insertDay = db.prepare('INSERT INTO days (id, label, date, summary) VALUES (?, ?, ?, ?)');
   const insertGroup = db.prepare('INSERT INTO groups (id, day_id, name, summary) VALUES (?, ?, ?, ?)');
-  const insertIdiom = db.prepare(`INSERT INTO idioms (id, group_id, day_id, name, pronunciation, meaning, origin, usage, collocations, structure, examples, synonyms, confusing, tip, one_line_summary, source) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
-  const insertWord = db.prepare(`INSERT INTO words (id, group_id, day_id, name, pronunciation, meaning, usage_context, examples, notes, analysis_angles, synonyms, confusing, one_line_summary) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+  const insertIdiom = db.prepare(`INSERT INTO idioms (id, group_id, day_id, name, pronunciation, meaning, origin, usage, collocations, structure, examples, synonyms, tip, one_line_summary, source) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+  const insertWord = db.prepare(`INSERT INTO words (id, group_id, day_id, name, pronunciation, meaning, usage_context, examples, notes, analysis_angles, synonyms, one_line_summary) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
   const insertQuiz = db.prepare(`INSERT INTO quizzes (id, day_id, group_id, year, region, question, blank_count, options, answer, analysis, tips) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
 
   const transaction = db.transaction(() => {
@@ -61,7 +61,6 @@ function seed() {
               idiom.structure || null,
               JSON.stringify(idiom.examples || []),
               JSON.stringify(idiom.synonyms || []),
-              JSON.stringify(idiom.confusing || []),
               idiom.tip || null,
               idiom.oneLineSummary || null,
               idiom.source || null
@@ -84,7 +83,6 @@ function seed() {
               word.notes || null,
               JSON.stringify(word.analysisAngles || []),
               JSON.stringify(word.synonyms || []),
-              JSON.stringify(word.confusing || []),
               word.oneLineSummary || null
             );
           }

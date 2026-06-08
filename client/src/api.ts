@@ -1,6 +1,6 @@
 import type { DayData, Idiom, Word } from './types';
 
-const API_BASE = 'http://localhost:4917/api';
+const API_BASE = `http://${window.location.hostname}:4917/api`;
 
 async function fetchJson<T>(url: string): Promise<T> {
   const res = await fetch(url);

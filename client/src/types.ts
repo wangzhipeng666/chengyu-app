@@ -23,7 +23,6 @@ export interface Word {
   notes?: string;
   analysisAngles: AnalysisAngle[];
   synonyms: string[];
-  confusing: string[];
   oneLineSummary: string;
 }
 
@@ -39,7 +38,6 @@ export interface Idiom {
   structure?: string;
   examples?: string[];
   synonyms?: string[];
-  confusing?: string[];
   tip?: string;
   oneLineSummary: string;
   source?: string;
