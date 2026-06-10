@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { useStore, quizKey } from '../store/useStore';
 import { getDay } from '../data';
+import PdfModal from '../components/PdfModal';
 import type { Idiom, Word, Quiz, DayData } from '../types';
 
 // ============================================
@@ -383,13 +384,25 @@ function QuizSection({ dayId, quizzes }: { dayId: string; quizzes: Quiz[] }) {
 // ============================================
 // 天数详情页
 // ============================================
+function useIsDesktop() {
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
+  useEffect(() => {
+    const handler = () => setIsDesktop(window.innerWidth >= 1024);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+  return isDesktop;
+}
+
 export default function DayPage() {
   const { dayId } = useParams();
   const navigate = useNavigate();
+  const isDesktop = useIsDesktop();
   const { markDayLearned } = useStore();
   const [activeTab, setActiveTab] = useState<'notes' | 'quiz'>('notes');
   const [typeFilter, setTypeFilter] = useState<'all' | 'idiom' | 'word'>('all');
   const [showBackTop, setShowBackTop] = useState(false);
+  const [showPdfModal, setShowPdfModal] = useState(false);
   const [day, setDay] = useState<DayData | undefined>(undefined);
 
   useEffect(() => {
@@ -441,7 +454,7 @@ export default function DayPage() {
           {day.label}
         </h1>
         <button
-          onClick={() => navigate(`/pdf/${day.id}`)}
+          onClick={() => isDesktop ? navigate(`/pdf/${day.id}`) : setShowPdfModal(true)}
           className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
           style={{ background: 'var(--color-primary-soft)', color: 'var(--color-primary)' }}
         >
@@ -555,6 +568,11 @@ export default function DayPage() {
         >
           <ArrowUp size={20} />
         </button>
+      )}
+
+      {/* PDF Modal */}
+      {showPdfModal && (
+        <PdfModal dayId={day.id} onClose={() => setShowPdfModal(false)} />
       )}
     </div>
   );
