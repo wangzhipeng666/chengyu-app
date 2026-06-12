@@ -96,6 +96,7 @@ export default function DictionaryPage() {
   const [typeFilter, setTypeFilter] = useState<'all' | 'idiom' | 'word'>('all');
   const [showBackTop, setShowBackTop] = useState(false);
   const [showGroupPicker, setShowGroupPicker] = useState(false);
+  const [showDayPicker, setShowDayPicker] = useState(false);
   const [daysList, setDaysList] = useState<DayData[]>([]);
 
   useEffect(() => {
@@ -204,20 +205,33 @@ export default function DictionaryPage() {
         </div>
       </div>
 
-      {/* Day Tabs */}
-      <div className="flex gap-2 overflow-x-auto pb-2 mb-3 scrollbar-hide">
-        <button onClick={() => { setActiveDay('all'); setActiveGroup('all'); }}
-          className="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all"
-          style={{ background: activeDay === 'all' ? 'var(--color-primary)' : 'var(--color-hairline-light)', color: activeDay === 'all' ? 'var(--color-on-primary)' : 'var(--color-ink-secondary)' }}>
-          全部
+      {/* Day Tabs - Collapsible */}
+      <div className="mb-3">
+        <button
+          onClick={() => setShowDayPicker(!showDayPicker)}
+          className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-all w-full text-left"
+          style={{ background: 'var(--color-canvas-warm)', border: '1px solid var(--color-hairline-light)', color: activeDay !== 'all' ? 'var(--color-primary)' : 'var(--color-ink-secondary)' }}
+        >
+          <span className="text-xs opacity-60">天数</span>
+          <span className="flex-1 truncate">{activeDay === 'all' ? '全部天数' : daysList.find(d => d.id === activeDay)?.label}</span>
+          <ChevronDown size={14} style={{ transform: showDayPicker ? 'rotate(180deg)' : '', transition: 'transform 0.2s' }} />
         </button>
-        {daysList.map(day => (
-          <button key={day.id} onClick={() => { setActiveDay(day.id); setActiveGroup('all'); }}
-            className="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all"
-            style={{ background: activeDay === day.id ? 'var(--color-primary)' : 'var(--color-hairline-light)', color: activeDay === day.id ? 'var(--color-on-primary)' : 'var(--color-ink-secondary)' }}>
-            {day.label}
-          </button>
-        ))}
+        {showDayPicker && (
+          <div className="mt-2 p-2 rounded-xl grid grid-cols-2 gap-1.5 animate-slide-up" style={{ background: 'var(--color-canvas-card)', border: '1px solid var(--color-hairline-light)', boxShadow: 'var(--shadow-md)' }}>
+            <button onClick={() => { setActiveDay('all'); setActiveGroup('all'); setShowDayPicker(false); }}
+              className="px-3 py-2 rounded-lg text-xs font-medium text-left transition-all"
+              style={{ background: activeDay === 'all' ? 'var(--color-primary)' : 'transparent', color: activeDay === 'all' ? 'white' : 'var(--color-ink-secondary)' }}>
+              全部天数
+            </button>
+            {daysList.map(day => (
+              <button key={day.id} onClick={() => { setActiveDay(day.id); setActiveGroup('all'); setShowDayPicker(false); }}
+                className="px-3 py-2 rounded-lg text-xs font-medium text-left transition-all truncate"
+                style={{ background: activeDay === day.id ? 'var(--color-primary)' : 'transparent', color: activeDay === day.id ? 'white' : 'var(--color-ink-secondary)' }}>
+                {day.label}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Group Filter */}

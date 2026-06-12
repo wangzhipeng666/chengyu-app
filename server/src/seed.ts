@@ -23,7 +23,7 @@ function seed() {
   db.exec('DELETE FROM groups');
   db.exec('DELETE FROM days');
 
-  const dayFiles = ['day-1.json', 'day-2.json', 'day-3.json', 'day-4.json'];
+  const dayFiles = ['day-1.json', 'day-2.json', 'day-3.json', 'day-4.json', 'day-5.json', 'day-6.json'];
 
   const insertDay = db.prepare('INSERT INTO days (id, label, date, summary) VALUES (?, ?, ?, ?)');
   const insertGroup = db.prepare('INSERT INTO groups (id, day_id, name, summary) VALUES (?, ?, ?, ?)');

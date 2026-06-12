@@ -5,6 +5,11 @@ import * as api from '../api';
 let cachedDays: DayData[] | null = null;
 let cachedDaysMap: Map<string, DayData> = new Map();
 
+export function clearCache() {
+  cachedDays = null;
+  cachedDaysMap.clear();
+}
+
 export async function loadDays(): Promise<DayData[]> {
   if (cachedDays) return cachedDays;
   const daysList = await api.fetchDays();
