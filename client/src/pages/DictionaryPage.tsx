@@ -5,6 +5,23 @@ import { useStore } from '../store/useStore';
 import { loadDays, getAllIdioms, getAllWords } from '../data';
 import type { Idiom, Word, DayData } from '../types';
 
+// 高亮例句中的关键词
+function HighlightText({ text, keyword }: { text: string; keyword: string }) {
+  if (!keyword) return <>{text}</>;
+  const parts = text.split(new RegExp(`(${keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'g'));
+  return (
+    <>
+      {parts.map((part, i) =>
+        part === keyword ? (
+          <strong key={i} style={{ color: 'var(--color-primary)', fontWeight: 600 }}>{part}</strong>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </>
+  );
+}
+
 // ============================================
 // 成语卡片
 // ============================================
@@ -37,7 +54,7 @@ function IdiomCard({ idiom, dayId }: { idiom: Idiom; dayId: string }) {
           <div><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>用法</div><div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{idiom.usage}</div></div>
           {idiom.structure && <div><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>结构特点</div><div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{idiom.structure}</div></div>}
           {idiom.collocations && idiom.collocations.length > 0 && <div><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>常见搭配</div><div className="flex flex-wrap gap-1">{idiom.collocations.map((col, i) => <span key={i} className="tag tag-primary">{col}</span>)}</div></div>}
-          {idiom.examples && idiom.examples.length > 0 && <div><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>例句</div><ul className="space-y-1">{idiom.examples.map((ex, i) => <li key={i} className="text-sm leading-relaxed pl-3" style={{ color: 'var(--color-ink-secondary)', borderLeft: '2px solid var(--color-gold)' }}>{ex}</li>)}</ul></div>}
+          {idiom.examples && idiom.examples.length > 0 && <div><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>例句</div><ul className="space-y-1">{idiom.examples.map((ex, i) => <li key={i} className="text-sm leading-relaxed pl-3" style={{ color: 'var(--color-ink-secondary)', borderLeft: '2px solid var(--color-gold)' }}><HighlightText text={ex} keyword={idiom.name} /></li>)}</ul></div>}
           <div className="rounded-lg p-3" style={{ background: 'var(--color-warning-soft)' }}><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-warning)' }}>记忆口诀</div><div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{idiom.tip}</div></div>
           <div className="rounded-lg p-3" style={{ background: 'var(--color-hairline-light)' }}><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>一句话总结</div><div className="text-sm font-medium" style={{ color: 'var(--color-ink)' }}>{idiom.oneLineSummary}</div></div>
         </div>
@@ -75,7 +92,7 @@ function WordCard({ word, dayId }: { word: Word; dayId: string }) {
       {expanded && (
         <div className="idiom-card-content space-y-3 animate-slide-up">
           <div className="mt-3"><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>使用语境</div><div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{word.usageContext}</div></div>
-          {word.examples.length > 0 && <div><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>例句</div><ul className="space-y-1">{word.examples.map((ex, i) => <li key={i} className="text-sm leading-relaxed pl-3" style={{ color: 'var(--color-ink-secondary)', borderLeft: '2px solid var(--color-accent)' }}>{ex.text}{ex.source && <span className="text-xs ml-1" style={{ color: 'var(--color-ink-muted)' }}>— {ex.source}</span>}</li>)}</ul></div>}
+          {word.examples.length > 0 && <div><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>例句</div><ul className="space-y-1">{word.examples.map((ex, i) => <li key={i} className="text-sm leading-relaxed pl-3" style={{ color: 'var(--color-ink-secondary)', borderLeft: '2px solid var(--color-accent)' }}><HighlightText text={ex.text} keyword={word.name} />{ex.source && <span className="text-xs ml-1" style={{ color: 'var(--color-ink-muted)' }}>— {ex.source}</span>}</li>)}</ul></div>}
           {word.notes && <div className="rounded-lg p-3" style={{ background: 'var(--color-error-soft)' }}><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-error)' }}>注意事项</div><div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{word.notes}</div></div>}
           {word.analysisAngles.length > 0 && <div><div className="text-xs font-medium mb-2" style={{ color: 'var(--color-ink-muted)' }}>辨析角度</div><div className="space-y-2">{word.analysisAngles.map((angle, i) => <div key={i} className="rounded-lg p-2" style={{ background: 'var(--color-primary-soft)' }}><div className="text-xs font-medium" style={{ color: 'var(--color-primary)' }}>{angle.dimension}</div><div className="text-sm mt-0.5" style={{ color: 'var(--color-ink-secondary)' }}>{angle.description}</div></div>)}</div></div>}
           <div className="rounded-lg p-3" style={{ background: 'var(--color-hairline-light)' }}><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>一句话总结</div><div className="text-sm font-medium" style={{ color: 'var(--color-ink)' }}>{word.oneLineSummary}</div></div>
