@@ -12,7 +12,7 @@ router.get('/', (_req, res) => {
       (SELECT COUNT(*) FROM words WHERE day_id = d.id) as word_count,
       (SELECT COUNT(*) FROM quizzes WHERE day_id = d.id) as quiz_count
     FROM days d
-    ORDER BY d.id
+    ORDER BY CAST(SUBSTR(d.id, 5) AS INTEGER)
   `).all();
   res.json(days);
 });
