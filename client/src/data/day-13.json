@@ -1,0 +1,1003 @@
+{
+  "id": "day-13",
+  "label": "第13天",
+  "date": "2026-06-22",
+  "summary": "五组成语辨析：无可厚非类、另辟蹊径类、保驾护航类、身临其境类、明日黄花类。",
+  "groups": [
+    {
+      "id": "wukehoufei",
+      "name": "与'无可厚非'相关",
+      "idioms": [
+        {
+          "id": "wukehoufei",
+          "name": "无可厚非",
+          "pronunciation": "wu ke hou fei",
+          "meaning": "行为/观点存在一点小问题、小瑕疵，但能理解，不必过度苛责。",
+          "usageContext": "有小问题，但能理解、可以原谅。记住句式：即没啥问题，然后出现反转（但、然而、可是等）提示存在问题。",
+          "examples": [
+            {
+              "text": "企业利用AI降本增效，在商业逻辑上无可厚非。但追求效益并不意味可以突破法律底线。",
+              "source": "人民网"
+            }
+          ],
+          "notes": "存在瑕疵、可谅解。但转折后有问题。",
+          "analysisAngles": [
+            {
+              "dimension": "感情色彩",
+              "description": "偏积极，有小问题但可原谅"
+            }
+          ],
+          "synonyms": [
+            "情有可原"
+          ],
+          "oneLineSummary": "无可厚非存在瑕疵、可谅解。但转折后有问题。"
+        },
+        {
+          "id": "wukefeiyi",
+          "name": "无可非议",
+          "pronunciation": "wu ke fei yi",
+          "meaning": "没有什么可以指责的。言行完全合乎道理、完全正确，不存在一点缺陷。",
+          "usageContext": "程度重，零瑕疵、全正确。",
+          "examples": [
+            {
+              "text": "中方在本国管辖海域正常活动，采取必要措施维护主权和权益，正当合法、专业克制、无可非议。",
+              "source": "人民网"
+            }
+          ],
+          "notes": "零瑕疵、全正确。程度很重。",
+          "analysisAngles": [
+            {
+              "dimension": "程度",
+              "description": "程度重，完全正确无缺陷"
+            }
+          ],
+          "synonyms": [],
+          "oneLineSummary": "无可非议零瑕疵、全正确。程度很重。"
+        },
+        {
+          "id": "qingyoukeyuan",
+          "name": "情有可原",
+          "pronunciation": "qing you ke yuan",
+          "meaning": "按情理来看，有可以原谅的地方。",
+          "usageContext": "一定是做错了事、有过失，理由充分，可以宽恕，只是能原谅，不等于行为本身没错。",
+          "examples": [
+            {
+              "text": "垃圾分类是一个习惯养成的过程，老百姓刚开始不接受是情有可原的。",
+              "source": "人民网"
+            }
+          ],
+          "notes": "使用前提是犯错了，且理由充分。",
+          "analysisAngles": [
+            {
+              "dimension": "前提",
+              "description": "一定是做错了事，有过失"
+            }
+          ],
+          "synonyms": [
+            "无可厚非"
+          ],
+          "oneLineSummary": "情有可原已经犯错，有理由宽恕。"
+        },
+        {
+          "id": "wuyongzhiyi",
+          "name": "毋庸置疑",
+          "pronunciation": "wu yong zhi yi",
+          "meaning": "事实明显或理由充分，根本没有什么可怀疑的。",
+          "usageContext": "强调客观事实真实性、确定性。板上钉钉。",
+          "examples": [
+            {
+              "text": "毋庸置疑，新质生产力是以科学技术为主导的全新生产力形式。",
+              "source": "人民网"
+            }
+          ],
+          "notes": "表确定、客观事实、板上钉钉。",
+          "analysisAngles": [
+            {
+              "dimension": "语境",
+              "description": "强调客观事实真实性、确定性"
+            }
+          ],
+          "synonyms": [],
+          "oneLineSummary": "毋庸置疑表确定、客观事实、板上钉钉。"
+        },
+        {
+          "id": "wuxiekeji",
+          "name": "无懈可击",
+          "pronunciation": "wu xie ke ji",
+          "meaning": "没有一点弱点或漏洞可以让人攻击。形容十分严密，找不到任何破绽。",
+          "usageContext": "逻辑、论证、方案、说辞严密周全，找不到反驳的地方。",
+          "examples": [
+            {
+              "text": "这份调查报告论据充分、逻辑严密，论证几乎无懈可击。",
+              "source": "人民网"
+            }
+          ],
+          "notes": "讲论证逻辑、方案严密。",
+          "analysisAngles": [
+            {
+              "dimension": "语境",
+              "description": "逻辑、论证、方案严密周全"
+            }
+          ],
+          "synonyms": [],
+          "oneLineSummary": "无懈可击讲论证逻辑、方案严密。"
+        }
+      ],
+      "summary": "已经犯错，有理由宽恕→情有可原；存在瑕疵、可谅解→无可厚非；零瑕疵、全正确→无可非议；表确定、客观事实→毋庸置疑；讲论证逻辑、方案严密→无懈可击。"
+    },
+    {
+      "id": "lingpibijing",
+      "name": "与'另辟蹊径'相关",
+      "idioms": [
+        {
+          "id": "lingpibijing",
+          "name": "另辟蹊径",
+          "pronunciation": "ling pi xi jing",
+          "meaning": "另外开辟一条小路。",
+          "usageContext": "避开众人通用、常规的方法，独创一套新思路、新手段、新路径来解决问题，弯道超车。",
+          "examples": [
+            {
+              "text": "研究院团队另辟蹊径，融合高光谱成像与人工智能技术，打造出整板检测分拣一体化方案。",
+              "source": "人民网"
+            }
+          ],
+          "notes": "不走老路，换全新方法/思路。",
+          "analysisAngles": [
+            {
+              "dimension": "方向",
+              "description": "独创新方法、新路径"
+            }
+          ],
+          "synonyms": [],
+          "oneLineSummary": "另辟蹊径不走老路，换全新方法/思路。"
+        },
+        {
+          "id": "tuichuchuxin",
+          "name": "推陈出新",
+          "pronunciation": "tui chen chu xin",
+          "meaning": "剔除陈旧的，推出新生的。",
+          "usageContext": "先扬弃旧：不是全盘抛弃传统，而是取舍筛选；再创造新：依托原有根基革新。",
+          "examples": [
+            {
+              "text": "随着短视频平台的不断推陈出新，各地特色产业与硬核技术将不断被挖掘传播。",
+              "source": "人民网"
+            }
+          ],
+          "notes": "在旧基础上改良创新，旧物改造。",
+          "analysisAngles": [
+            {
+              "dimension": "方向",
+              "description": "依托原有根基革新"
+            }
+          ],
+          "synonyms": [],
+          "oneLineSummary": "推陈出新在旧基础上改良创新，旧物改造。"
+        },
+        {
+          "id": "yushijin",
+          "name": "与时俱进",
+          "pronunciation": "yu shi ju jin",
+          "meaning": "随着时代的发展而不断发展、前进。",
+          "usageContext": "指观念、制度、方法、技术、认知不僵化，紧跟当下时代发展趋势，主动更新自我。",
+          "examples": [
+            {
+              "text": "适应全球经济格局变化和妥善应对共同风险挑战，需要与时俱进深化全球金融治理体系改革。",
+              "source": "人民网"
+            }
+          ],
+          "notes": "跟着时代变化调整，贴合当下时代需求。",
+          "analysisAngles": [
+            {
+              "dimension": "方向",
+              "description": "紧跟时代发展趋势"
+            }
+          ],
+          "synonyms": [],
+          "oneLineSummary": "与时俱进跟着时代变化调整，贴合当下时代需求。"
+        }
+      ],
+      "summary": "跟着时代变化调整，贴合当下时代需求→与时俱进；在旧基础上改良创新→推陈出新；不走老路，换全新方法/思路→另辟蹊径。"
+    },
+    {
+      "id": "baojiahuhang",
+      "name": "与'保驾护航'相关",
+      "idioms": [
+        {
+          "id": "baojiahuhang",
+          "name": "保驾护航",
+          "pronunciation": "bao jia hu hang",
+          "meaning": "保护某事物（或人）能够正常、安全、顺利地进行或发展。",
+          "usageContext": "正向守护、保障顺利发展（强对弱、大对小）。",
+          "examples": [
+            {
+              "text": "完善法治体系，为行业高质量发展保驾护航。",
+              "source": "人民网"
+            }
+          ],
+          "notes": "正向守护、保障顺利发展。强对弱、大对小。",
+          "analysisAngles": [
+            {
+              "dimension": "方向",
+              "description": "正向守护、强对弱"
+            }
+          ],
+          "synonyms": [],
+          "oneLineSummary": "保驾护航正向守护、保障顺利发展。强对弱、大对小。"
+        },
+        {
+          "id": "tianzhuanjiawa",
+          "name": "添砖加瓦",
+          "pronunciation": "tian zhuan jia wa",
+          "meaning": "比喻做一些微小的工作，为某项大事业或大工程贡献自己的一份力量。",
+          "usageContext": "出一份微薄之力，参与建设。（弱对强、小对大）",
+          "examples": [
+            {
+              "text": "个人为伟大复兴添砖加瓦。",
+              "source": "人民网"
+            }
+          ],
+          "notes": "出一份微薄之力，参与建设。弱对强、小对大。",
+          "analysisAngles": [
+            {
+              "dimension": "方向",
+              "description": "弱对强、小对大，出微薄之力"
+            }
+          ],
+          "synonyms": [],
+          "oneLineSummary": "添砖加瓦出一份微薄之力，参与建设。弱对强、小对大。"
+        },
+        {
+          "id": "jinshangtianhua",
+          "name": "锦上添花",
+          "pronunciation": "jin shang tian hua",
+          "meaning": "在美丽的锦缎上再绣上花朵。比喻在原本已经很好的事物上，再增添美好的东西，使其更加完美。",
+          "usageContext": "主体基底本身优秀、完善、有利（底子不差），新增内容是点缀、加分项非必须。",
+          "examples": [
+            {
+              "text": "要始终把人民的安居乐业、安危冷暖放在心上，多做雪中送炭、急人之困的工作，少做锦上添花、花上垒花的虚功。",
+              "source": "人民网"
+            }
+          ],
+          "notes": "原本条件很好，优化升级、增益加分。不重要的点缀之物。",
+          "analysisAngles": [
+            {
+              "dimension": "方向",
+              "description": "原本条件好，新增是点缀"
+            }
+          ],
+          "synonyms": [],
+          "oneLineSummary": "锦上添花原本条件很好，优化升级、增益加分。不重要的点缀之物。"
+        },
+        {
+          "id": "tuibozhulan",
+          "name": "推波助澜",
+          "pronunciation": "tui bo zhu lan",
+          "meaning": "比喻从旁鼓动、助长事态（多指坏事、不好的风气），让不好的局势进一步扩大、恶化。",
+          "usageContext": "事情本身是负面、消极、有害的；人/媒体/制度/环境起到助推、放大坏结果的作用。",
+          "examples": [
+            {
+              "text": "日本右翼借网络舆论兴风作浪，为扩军备战摇旗呐喊，为冲破战后国际秩序推波助澜。",
+              "source": "人民网"
+            }
+          ],
+          "notes": "助长、恶化负面事态。贬义词。",
+          "analysisAngles": [
+            {
+              "dimension": "感情色彩",
+              "description": "贬义，助长负面事态"
+            }
+          ],
+          "synonyms": [],
+          "oneLineSummary": "推波助澜助长、恶化负面事态。贬义词。"
+        }
+      ],
+      "summary": "正向守护、保障顺利发展（强对弱、大对小）→保驾护航；出一份微薄之力，参与建设（弱对强、小对大）→添砖加瓦；原本条件很好，优化升级、增益加分（不重要的点缀之物）→锦上添花；助长、恶化负面事态→推波助澜。"
+    },
+    {
+      "id": "shenlinqijing",
+      "name": "与'身临其境'相关",
+      "idioms": [
+        {
+          "id": "shenlinqijing",
+          "name": "身临其境",
+          "pronunciation": "shen lin qi jing",
+          "meaning": "亲身面临那种境地。",
+          "usageContext": "多用于观赏、阅读、视听体验：读书、看剧、纪录片、VR、舞台表演、文字描写，让人有真实在场感，沉浸式体验。",
+          "examples": [
+            {
+              "text": "沉浸式演艺是指某些旅游景区或机构摒弃传统游览模式，将人们喜爱的场景通过艺术表演的方式转变为现实，让游客产生一种身临其境的体验。",
+              "source": "人民网"
+            }
+          ],
+          "notes": "仿佛亲身体处在场景、环境中。沉浸式体验。",
+          "analysisAngles": [
+            {
+              "dimension": "语境",
+              "description": "沉浸式体验，有真实在场感"
+            }
+          ],
+          "synonyms": [],
+          "oneLineSummary": "身临其境仿佛亲身体处在场景、环境中。沉浸式体验。"
+        },
+        {
+          "id": "shenshechudi",
+          "name": "设身处地",
+          "pronunciation": "she shen chu di",
+          "meaning": "指站在他人角度思考、体谅他人难处。",
+          "usageContext": "用于换位思考、体谅、理解他人。",
+          "examples": [
+            {
+              "text": "住房是群众的心头大事，要设身处地为群众着想。",
+              "source": "人民网"
+            }
+          ],
+          "notes": "记住换位思考。",
+          "analysisAngles": [
+            {
+              "dimension": "语境",
+              "description": "换位思考、体谅他人"
+            }
+          ],
+          "synonyms": [],
+          "oneLineSummary": "设身处地换位思考、体谅他人处境。"
+        },
+        {
+          "id": "gantongshenshou",
+          "name": "感同身受",
+          "pronunciation": "gan tong shen shou",
+          "meaning": "原指心里很感激，就像自己亲身领受到恩惠一样。",
+          "usageContext": "侧重体会别人的情绪、痛苦、委屈、难处；自己没有亲身经历这件事，但能共情对方的感受。",
+          "examples": [
+            {
+              "text": "宣讲中，不少细节让观众感同身受。",
+              "source": "人民网"
+            }
+          ],
+          "notes": "前提是自己没有亲身经历过，但是能共情。记住共情。",
+          "analysisAngles": [
+            {
+              "dimension": "语境",
+              "description": "共情他人情绪，产生相同感受"
+            }
+          ],
+          "synonyms": [],
+          "oneLineSummary": "感同身受共情他人情绪、苦难、心酸，内心产生相同感受。"
+        },
+        {
+          "id": "shentilixing",
+          "name": "身体力行",
+          "pronunciation": "shen ti li xing",
+          "meaning": "亲身体验，努力实行。",
+          "usageContext": "多用来形容亲自参与、带头去做某项具体的工作或事业，强调实干和参与。",
+          "examples": [
+            {
+              "text": "青年记者主动请缨去一线驻扎调研采访，身体力行推进主流媒体系统性变革走深走实。",
+              "source": "人民网"
+            }
+          ],
+          "notes": "亲自落地、动手践行理念。强调实干、亲自参与。",
+          "analysisAngles": [
+            {
+              "dimension": "语境",
+              "description": "亲自参与、带头实干"
+            }
+          ],
+          "synonyms": [],
+          "oneLineSummary": "身体力行亲自落地、动手践行理念。强调实干。"
+        }
+      ],
+      "summary": "仿佛亲身体处在场景、环境中（沉浸式体验）→选身临其境；换位思考、体谅他人处境→选设身处地；共情他人情绪、苦难、心酸，内心产生相同感受→选感同身受；亲自落地、动手践行理念→选身体力行。"
+    },
+    {
+      "id": "mingrihuanghua",
+      "name": "与'明日黄花'相关",
+      "idioms": [
+        {
+          "id": "mingrihuanghua",
+          "name": "明日黄花",
+          "pronunciation": "ming ri huang hua",
+          "meaning": "原指重阳节过后，逐渐萎谢的菊花。",
+          "usageContext": "事物因时代变化、时间流逝，不再流行、失去作用。没有那么火、那么有用了。",
+          "examples": [
+            {
+              "text": "随着时间的推移，消费者的审美和喜好会不断改变，现在红极一时的IP也可能彻底失去社交货币属性，沦为明日黄花。",
+              "source": "人民网"
+            }
+          ],
+          "notes": "事物过时落伍，失去热度与价值。",
+          "analysisAngles": [
+            {
+              "dimension": "语境",
+              "description": "事物过时、失去热度"
+            }
+          ],
+          "synonyms": [],
+          "oneLineSummary": "明日黄花事物过时落伍，失去热度与价值。"
+        },
+        {
+          "id": "luoyangzhigui",
+          "name": "洛阳纸贵",
+          "pronunciation": "luo yang zhi gui",
+          "meaning": "左思《三都赋》写成后，大家争相传抄，洛阳纸张供不应求、价格上涨。现比喻著作、文章、作品风行一时，流传广泛，受人追捧。",
+          "usageContext": "文学作品、书籍、爆款文章、优秀创作，作品受欢迎、广为流传、热销爆红。",
+          "examples": [
+            {
+              "text": "改革开放之初，《第一推动丛书》洛阳纸贵，成为思想解放的号角。",
+              "source": "人民网"
+            }
+          ],
+          "notes": "作品广受追捧，风行热销、流传极广。",
+          "analysisAngles": [
+            {
+              "dimension": "语境",
+              "description": "作品受欢迎、广为流传"
+            }
+          ],
+          "synonyms": [],
+          "oneLineSummary": "洛阳纸贵作品广受追捧，风行热销、流传极广。"
+        },
+        {
+          "id": "shoudangqichong",
+          "name": "首当其冲",
+          "pronunciation": "shou dang qi chong",
+          "meaning": "指最先受到冲击、遭遇灾难、承受损害。",
+          "usageContext": "一定搭配坏事、危机、灾害、负面影响；侧重：第一个遭殃、最先受损。",
+          "examples": [
+            {
+              "text": "能源价格上涨直接推高企业生产成本，钢铁、化工、玻璃、水泥、化肥等能源密集型行业首当其冲。",
+              "source": "人民网"
+            }
+          ],
+          "notes": "最先承受灾祸、冲击、负面影响。",
+          "analysisAngles": [
+            {
+              "dimension": "语境",
+              "description": "搭配坏事、灾害，第一个遭殃"
+            }
+          ],
+          "synonyms": [],
+          "oneLineSummary": "首当其冲最先承受灾祸、冲击、负面影响。"
+        },
+        {
+          "id": "erwenzesong",
+          "name": "耳闻则诵",
+          "pronunciation": "er wen ze song",
+          "meaning": "听过一遍就能背诵下来，形容记忆力极强，过耳不忘。",
+          "usageContext": "人，形容孩童、才子天资聪慧、记性好，专门形容记忆力出众。",
+          "examples": [
+            {
+              "text": "这位神童天资过人，耳闻则诵，先生讲授的诗文听一遍就能完整背出。",
+              "source": "人民网"
+            }
+          ],
+          "notes": "听一遍就能背诵，记忆力天赋极强。",
+          "analysisAngles": [
+            {
+              "dimension": "语境",
+              "description": "记忆力极强，过耳不忘"
+            }
+          ],
+          "synonyms": [],
+          "oneLineSummary": "耳闻则诵听一遍就能背诵，记忆力天赋极强。"
+        }
+      ],
+      "summary": "看到事物过时落伍，失去热度与价值→选明日黄花；看到作品广受追捧，风行热销、流传极广→选洛阳纸贵；看到最先承受灾祸、冲击、负面影响→选首当其冲；看到听一遍就能背诵，记忆力天赋极强→选耳闻则诵。"
+    }
+  ],
+  "quizzes": [
+    {
+      "id": 1,
+      "year": "2017",
+      "region": "四川",
+      "groupId": "wukehoufei",
+      "question": "作为综艺节目的重要元素，明星的参与本____，但一线明星也无法保证收视率的节节攀升。文化产为的特殊性在于——生产的是意义，仅仅靠明星、场面的____显然无法实现文化产业的核心竞争力。事实上，一档综艺节目的火爆一定与其对意义生产层面的____能力息息相关。",
+      "blankCount": 3,
+      "options": [
+        {
+          "label": "A",
+          "text": "无可厚非 堆砌 把控"
+        },
+        {
+          "label": "B",
+          "text": "无可非议 组合 驾驭"
+        },
+        {
+          "label": "C",
+          "text": "不容置喙 拼凑 把持"
+        },
+        {
+          "label": "D",
+          "text": "毋庸置疑 嫁接 操纵"
+        }
+      ],
+      "answer": "A",
+      "analysis": {
+        "blank1": "横线前体现明星参与综艺节目，这没什么问题。A项无可厚非指虽有缺点但还有可取之处。",
+        "blank2": "A项堆砌体现缺乏内涵。",
+        "blank3": "事实上表转折，横线处应偏积极。A项把控体现控制，当选。"
+      },
+      "tips": [
+        "无可厚非指虽有缺点、不足，但可以原谅。",
+        "无可非议指完全合乎情理、完全正确。"
+      ]
+    },
+    {
+      "id": 2,
+      "year": "2023",
+      "region": "联考",
+      "groupId": "wukehoufei",
+      "question": "追星____，但频频越界的饭圈乱象，不仅有违社会公序良俗、触碰社会道德底线，有的还已触碰法律红线。____饭圈乱象，关涉青少年成长，关乎社会和谐稳定。",
+      "blankCount": 2,
+      "options": [
+        {
+          "label": "A",
+          "text": "无可厚非 整治"
+        },
+        {
+          "label": "B",
+          "text": "无可非议 疏导"
+        },
+        {
+          "label": "C",
+          "text": "天经地义 治理"
+        },
+        {
+          "label": "D",
+          "text": "情有可原 梳理"
+        }
+      ],
+      "answer": "A",
+      "analysis": {
+        "blank1": "追星没什么问题，接着但表转折，A项无可厚非可保留。",
+        "blank2": "搭配乱象，A项整治恰当。"
+      },
+      "tips": [
+        "无可厚非指虽有缺点、不足，但可以原谅。"
+      ]
+    },
+    {
+      "id": 3,
+      "year": "2018",
+      "region": "联考",
+      "groupId": "wukehoufei",
+      "question": "这些学校虽然保留了师范院校的名称，但实际已经发展为综合性大学。这些学校具有教师教育传统，有着师资和课程体系等的____，可以保证大学后期教育专业培养的质量。这类大学具有举办教师教育培训的资格是____的。",
+      "blankCount": 2,
+      "options": [
+        {
+          "label": "A",
+          "text": "支持 无懈可击"
+        },
+        {
+          "label": "B",
+          "text": "积累 毋庸讳言"
+        },
+        {
+          "label": "C",
+          "text": "积淀 无可厚非"
+        },
+        {
+          "label": "D",
+          "text": "支撑 毋庸置疑"
+        }
+      ],
+      "answer": "D",
+      "analysis": {
+        "blank1": "D项支撑非常好，可以体现强有力支柱的作用。",
+        "blank2": "D项毋庸置疑指事实非常清楚，根本不用怀疑，当选。"
+      },
+      "tips": [
+        "毋庸置疑指事实非常明显，根本不用怀疑。"
+      ]
+    },
+    {
+      "id": 4,
+      "year": "2020",
+      "region": "江苏",
+      "groupId": "wukehoufei",
+      "question": "创新乡贤文化确实有助于以乡情乡愁为纽带，吸引和凝聚各方人士支持家乡建设。此乃____乡村现代化难题的有益尝试，这一点显然是____的。",
+      "blankCount": 2,
+      "options": [
+        {
+          "label": "A",
+          "text": "针对 显而易见"
+        },
+        {
+          "label": "B",
+          "text": "缓解 举足轻重"
+        },
+        {
+          "label": "C",
+          "text": "应对 弥足珍贵"
+        },
+        {
+          "label": "D",
+          "text": "破解 毋庸置疑"
+        }
+      ],
+      "answer": "D",
+      "analysis": {
+        "blank1": "搭配难题，D项破解搭配恰当。",
+        "blank2": "D项毋庸置疑指板上钉钉的、真的、确实的，当选。"
+      },
+      "tips": [
+        "毋庸置疑指事实明显或理由充足，没有什么可以怀疑的。"
+      ]
+    },
+    {
+      "id": 5,
+      "year": "2024",
+      "region": "联考",
+      "groupId": "wukehoufei",
+      "question": "主动退回超额公款，坚守职业底线，这种诚信行为____，值得全体员工学习。",
+      "blankCount": 1,
+      "options": [
+        {
+          "label": "A",
+          "text": "无可厚非"
+        },
+        {
+          "label": "B",
+          "text": "无可非议"
+        },
+        {
+          "label": "C",
+          "text": "不容置喙"
+        },
+        {
+          "label": "D",
+          "text": "毋庸置疑"
+        }
+      ],
+      "answer": "B",
+      "analysis": {
+        "blank1": "文段强调合理，对应无可非议。"
+      },
+      "tips": [
+        "无可非议指言行完全合乎道理、完全正确。"
+      ]
+    },
+    {
+      "id": 6,
+      "year": "2018",
+      "region": "浙江",
+      "groupId": "lingpibijing",
+      "question": "任何时候，内容推送不能少了总编辑，再好的传播渠道也要有看门人，即使在技术为王的时代，也不能完全让算法____内容。这一方面需要更完善的法律法规、更理性健康的舆论空间，为互联网算法时代的信息传播____。",
+      "blankCount": 2,
+      "options": [
+        {
+          "label": "A",
+          "text": "干预 添砖加瓦"
+        },
+        {
+          "label": "B",
+          "text": "决定 保驾护航"
+        },
+        {
+          "label": "C",
+          "text": "影响 遮风挡雨"
+        },
+        {
+          "label": "D",
+          "text": "代替 披荆斩棘"
+        }
+      ],
+      "answer": "B",
+      "analysis": {
+        "blank1": "B项决定体现起主导、关键性作用。",
+        "blank2": "B项保驾护航比喻依靠政策、制度、监管等力量为发展提供保护。"
+      },
+      "tips": [
+        "保驾护航比喻依靠政策、制度、监管等力量为发展提供保护。"
+      ]
+    },
+    {
+      "id": 7,
+      "year": "2024",
+      "region": "联考",
+      "groupId": "baojiahuhang",
+      "question": "当前，中国汽车产业技术成果大量涌现，创新活力与迭代速度令全球同行瞩目。更重要的是，源自中国市场的优秀技术与产品的应用场景具有____。在超大规模市场中____、成长的中国汽车产业，有条件也有能力为实现高水平科技自立自强____。",
+      "blankCount": 3,
+      "options": [
+        {
+          "label": "A",
+          "text": "通用性 锤炼 增光添彩"
+        },
+        {
+          "label": "B",
+          "text": "普适性 淬炼 添砖加瓦"
+        },
+        {
+          "label": "C",
+          "text": "先进性 历练 保驾护航"
+        },
+        {
+          "label": "D",
+          "text": "适用性 锻造 锦上添花"
+        }
+      ],
+      "answer": "B",
+      "analysis": {
+        "blank1": "B项普适性符合文意。",
+        "blank2": "B项淬炼搭配得当。",
+        "blank3": "B项添砖加瓦符合文意。"
+      },
+      "tips": [
+        "添砖加瓦比喻做一些微小的工作，贡献自己的一份力量。"
+      ]
+    },
+    {
+      "id": 8,
+      "year": "2015",
+      "region": "天津",
+      "groupId": "baojiahuhang",
+      "question": "那么国产电影市场需不需要职业导演？这是____的。一个健康的市场，应该以职业导演打底，非职业导演____。",
+      "blankCount": 2,
+      "options": [
+        {
+          "label": "A",
+          "text": "见仁见智 登堂入室"
+        },
+        {
+          "label": "B",
+          "text": "显而易见 精益求精"
+        },
+        {
+          "label": "C",
+          "text": "毋庸置疑 锦上添花"
+        },
+        {
+          "label": "D",
+          "text": "毋庸置疑 雪中送炭"
+        }
+      ],
+      "answer": "C",
+      "analysis": {
+        "blank1": "首句提出疑问，横线后回答了首句，C项毋庸置疑可保留。",
+        "blank2": "非职业导演是在基础上的补充，起到补充、点缀作用。C项锦上添花当选。"
+      },
+      "tips": [
+        "锦上添花比喻本身条件已经很好，再增添美好事物。"
+      ]
+    },
+    {
+      "id": 9,
+      "year": "2024",
+      "region": "天津",
+      "groupId": "baojiahuhang",
+      "question": "要解决一个大问题，往往要有好的工具。工具的发展是一个____的过程。",
+      "blankCount": 1,
+      "options": [
+        {
+          "label": "A",
+          "text": "锦上添花"
+        },
+        {
+          "label": "B",
+          "text": "精益求精"
+        },
+        {
+          "label": "C",
+          "text": "千锤百炼"
+        },
+        {
+          "label": "D",
+          "text": "精雕细琢"
+        }
+      ],
+      "answer": "B",
+      "analysis": {
+        "blank1": "搭配工具的发展，工具的发展是不断向前、追求更好、持续迭代升级的过程。B项精益求精符合文意，当选。"
+      },
+      "tips": [
+        "精益求精指已经做得很好，仍然追求更完美。"
+      ]
+    },
+    {
+      "id": 10,
+      "year": "2023",
+      "region": "江苏",
+      "groupId": "shenlinqijing",
+      "question": "当下发展迅速的社会生活带来了多种多样的语言新现象。新事物____，新现象日新月异，词库便随之不断____。各类新词新语____。",
+      "blankCount": 3,
+      "options": [
+        {
+          "label": "A",
+          "text": "应接不暇 推陈出新 不可胜数"
+        },
+        {
+          "label": "B",
+          "text": "屡见不鲜 弃旧图新 俯拾即是"
+        },
+        {
+          "label": "C",
+          "text": "接踵而至 去芜存菁 恒河沙数"
+        },
+        {
+          "label": "D",
+          "text": "层出不穷 吐故纳新 不胜枚举"
+        }
+      ],
+      "answer": "D",
+      "analysis": {
+        "blank1": "D项层出不穷符合文意。",
+        "blank2": "D项吐故纳新体现新。",
+        "blank3": "D项不胜枚举当选。"
+      },
+      "tips": [
+        "层出不穷接连不断地出现。",
+        "吐故纳新排出旧的，吸收新的。"
+      ]
+    },
+    {
+      "id": 11,
+      "year": "2025",
+      "region": "联考",
+      "groupId": "shenlinqijing",
+      "question": "云南石林喀斯特地质地貌奇观分布范围广，气势恢宏。置身石林，宛如进入石峰石柱的海洋。举目四望，造型美妙的石峰石柱____，稍换角度，景象又迥然不同，变化多端，让人____。",
+      "blankCount": 2,
+      "options": [
+        {
+          "label": "A",
+          "text": "比比皆是 目不暇接"
+        },
+        {
+          "label": "B",
+          "text": "千姿百态 眼花缭乱"
+        },
+        {
+          "label": "C",
+          "text": "浑然天成 应接不暇"
+        },
+        {
+          "label": "D",
+          "text": "美不胜收 叹为观止"
+        }
+      ],
+      "answer": "A",
+      "analysis": {
+        "blank1": "根据海洋可知，横线处体现多。A项比比皆是保留。",
+        "blank2": "A项目不暇接当选。"
+      },
+      "tips": [
+        "目不暇接看到接连不断、来不及看。",
+        "眼花缭乱迷乱、杂乱的感觉。"
+      ]
+    },
+    {
+      "id": 12,
+      "year": "2024",
+      "region": "江苏",
+      "groupId": "shenlinqijing",
+      "question": "革命文物见证光荣历史，传承红色基因。技术的进步，给革命文物传播带来了全新的____。通过多媒体情景展示，观众可以____，重温当年情境。",
+      "blankCount": 2,
+      "options": [
+        {
+          "label": "A",
+          "text": "契机 设身处地"
+        },
+        {
+          "label": "B",
+          "text": "载体 感同身受"
+        },
+        {
+          "label": "C",
+          "text": "形式 抚今追昔"
+        },
+        {
+          "label": "D",
+          "text": "机遇 身临其境"
+        }
+      ],
+      "answer": "D",
+      "analysis": {
+        "blank1": "D项机遇指有利的时机、发展机会。",
+        "blank2": "通过多媒体情景展示可以沉浸式体验，对应D项身临其境。"
+      },
+      "tips": [
+        "身临其境指仿佛亲自到了那个境地。"
+      ]
+    },
+    {
+      "id": 13,
+      "year": "2024",
+      "region": "联考",
+      "groupId": "shenlinqijing",
+      "question": "读万卷书，行万里路虽是明代董其昌提出的观点，但却是中国历代许多文人所____的。用简易的交通工具和双脚丈量大地，给我们留下了丰厚的文化遗存。",
+      "blankCount": 1,
+      "options": [
+        {
+          "label": "A",
+          "text": "推崇备至"
+        },
+        {
+          "label": "B",
+          "text": "身体力行"
+        },
+        {
+          "label": "C",
+          "text": "全力以赴"
+        },
+        {
+          "label": "D",
+          "text": "孜孜以求"
+        }
+      ],
+      "answer": "B",
+      "analysis": {
+        "blank1": "用简易的交通工具和双脚丈量大地提示历代文人亲自践行了。B项身体力行当选。"
+      },
+      "tips": [
+        "身体力行指亲身体验、亲身践行。"
+      ]
+    },
+    {
+      "id": 14,
+      "year": "2012",
+      "region": "联考",
+      "groupId": "mingrihuanghua",
+      "question": "当天下午，加尔各答的唐人街可谓____，人们携老扶幼，喜气洋洋地来到当地著名的科学城礼堂观看____的文艺演出。当春节序曲等全球华人____的乐曲响彻整个表演大厅时，整个大厅变成了一片欢庆的海洋。",
+      "blankCount": 3,
+      "options": [
+        {
+          "label": "A",
+          "text": "摩肩接踵 妙趣横生 口口相传"
+        },
+        {
+          "label": "B",
+          "text": "万人空巷 异彩纷呈 耳熟能详"
+        },
+        {
+          "label": "C",
+          "text": "倾巢而出 奇观异彩 耳闻则诵"
+        },
+        {
+          "label": "D",
+          "text": "人头攒动 五彩缤纷 烂熟于心"
+        }
+      ],
+      "answer": "B",
+      "analysis": {
+        "blank1": "B项万人空巷形容庆祝、盛会盛况空前。",
+        "blank2": "B项异彩纷呈指各色精彩表演纷纷呈现。",
+        "blank3": "B项耳熟能详指听得多，熟悉到能复述，当选。"
+      },
+      "tips": [
+        "万人空巷形容庆祝、盛会盛况空前。",
+        "耳熟能详指听得多，熟悉到能复述。"
+      ]
+    },
+    {
+      "id": 15,
+      "year": "2026",
+      "region": "上海",
+      "groupId": "mingrihuanghua",
+      "question": "在科技迭代加速的背景下，那些凭借独特功能曾经风靡一时的传统电子产品，如今已是____，逐渐淡出了主流消费电子市场的视野。",
+      "blankCount": 1,
+      "options": [
+        {
+          "label": "A",
+          "text": "差强人意"
+        },
+        {
+          "label": "B",
+          "text": "时过境迁"
+        },
+        {
+          "label": "C",
+          "text": "镜花水月"
+        },
+        {
+          "label": "D",
+          "text": "明日黄花"
+        }
+      ],
+      "answer": "D",
+      "analysis": {
+        "blank1": "曾经风靡一时……逐渐淡出了视野提示以前很火现在不火了。D项明日黄花比喻过时、失去时效性、不再受欢迎的事物，当选。"
+      },
+      "tips": [
+        "明日黄花比喻过时、失去时效性、不再受欢迎的事物。"
+      ]
+    }
+  ]
+}
