@@ -3,7 +3,7 @@ import * as api from '../api';
 
 // In-memory cache
 let cachedDays: DayData[] | null = null;
-let cachedDaysMap: Map<string, DayData> = new Map();
+const cachedDaysMap: Map<string, DayData> = new Map();
 
 export function clearCache() {
   cachedDays = null;

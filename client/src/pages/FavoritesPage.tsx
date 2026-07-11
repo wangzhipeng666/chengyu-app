@@ -1,8 +1,26 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Heart, ChevronDown, ChevronUp, HeartOff } from 'lucide-react';
 import { useStore } from '../store/useStore';
-import { loadDays, getAllIdioms, getAllWords } from '../data';
-import type { DayData } from '../types';
+import { loadDays } from '../data';
+import type { DayData, Idiom, Word, WordExample } from '../types';
+
+type FavoriteIdiomItem = {
+  idiom: Idiom;
+  dayId: string;
+  groupName: string;
+  itemType: 'idiom';
+  dayLabel: string;
+};
+
+type FavoriteWordItem = {
+  word: Word;
+  dayId: string;
+  groupName: string;
+  itemType: 'word';
+  dayLabel: string;
+};
+
+type FavoriteItem = FavoriteIdiomItem | FavoriteWordItem;
 
 function FavoriteCard({ name, pronunciation, meaning, dayLabel, itemType, onRemove, children }: {
   name: string; pronunciation?: string; meaning: string; dayLabel: string; itemType: string; onRemove: () => void; children?: React.ReactNode;
@@ -47,19 +65,34 @@ export default function FavoritesPage() {
     loadDays().then(d => setDaysList(d));
   }, []);
 
-  const allIdioms = useMemo(() => getAllIdioms(), [daysList]);
-  const allWords = useMemo(() => getAllWords(), [daysList]);
+  const allIdioms = useMemo(
+    () => daysList.flatMap(day =>
+      day.groups.flatMap(group =>
+        (group.idioms || []).map(idiom => ({ idiom, dayId: day.id, groupName: group.name }))
+      )
+    ),
+    [daysList]
+  );
+  const allWords = useMemo(
+    () => daysList.flatMap(day =>
+      day.groups.flatMap(group =>
+        (group.words || []).map(word => ({ word, dayId: day.id, groupName: group.name }))
+      )
+    ),
+    [daysList]
+  );
 
-  const favoriteItems = favorites.map(f => {
+  const favoriteItems = favorites.reduce<FavoriteItem[]>((items, f) => {
     const day = daysList.find(d => d.id === f.dayId);
     if (f.itemType === 'idiom') {
       const found = allIdioms.find(i => i.dayId === f.dayId && i.idiom.id === f.itemId);
-      return found ? { ...found, itemType: 'idiom' as const, dayLabel: day?.label || f.dayId } : null;
-    } else {
-      const found = allWords.find(w => w.dayId === f.dayId && w.word.id === f.itemId);
-      return found ? { ...found, itemType: 'word' as const, dayLabel: day?.label || f.dayId } : null;
+      if (found) items.push({ ...found, itemType: 'idiom', dayLabel: day?.label || f.dayId });
+      return items;
     }
-  }).filter(Boolean);
+    const found = allWords.find(w => w.dayId === f.dayId && w.word.id === f.itemId);
+    if (found) items.push({ ...found, itemType: 'word', dayLabel: day?.label || f.dayId });
+    return items;
+  }, []);
 
   return (
     <div className="max-w-lg mx-auto px-4 pt-6 animate-fade-in">
@@ -84,30 +117,30 @@ export default function FavoritesPage() {
           {favoriteItems.map(item => {
             if (!item) return null;
             if (item.itemType === 'idiom') {
-              const { idiom, dayId, dayLabel } = item as { idiom: any; dayId: string; dayLabel: string };
+              const { idiom, dayId, dayLabel } = item;
               return (
                 <FavoriteCard key={`${dayId}-${idiom.id}`} name={idiom.name} pronunciation={idiom.pronunciation}
                   meaning={idiom.meaning} dayLabel={dayLabel} itemType="idiom"
                   onRemove={() => removeFavorite(dayId, idiom.id)}>
                   <div className="idiom-card-content space-y-3 animate-slide-up">
                     {idiom.origin && <div className="mt-3"><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>出处</div><div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{idiom.origin}</div></div>}
-                    <div><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>用法</div><div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{idiom.usage}</div></div>
-                    {idiom.examples?.length > 0 && <div><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>例句</div><ul className="space-y-1">{idiom.examples.map((ex: string, i: number) => <li key={i} className="text-sm leading-relaxed pl-3" style={{ color: 'var(--color-ink-secondary)', borderLeft: '2px solid var(--color-gold)' }}>{ex}</li>)}</ul></div>}
-                    <div className="rounded-lg p-3" style={{ background: 'var(--color-warning-soft)' }}><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-warning)' }}>记忆口诀</div><div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{idiom.tip}</div></div>
-                    <div className="rounded-lg p-3" style={{ background: 'var(--color-hairline-light)' }}><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>一句话总结</div><div className="text-sm font-medium" style={{ color: 'var(--color-ink)' }}>{idiom.oneLineSummary}</div></div>
+                    {idiom.usage && <div><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>用法</div><div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{idiom.usage}</div></div>}
+                    {(idiom.examples || []).length > 0 && <div><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>例句</div><ul className="space-y-1">{(idiom.examples || []).map((ex: string, i: number) => <li key={i} className="text-sm leading-relaxed pl-3" style={{ color: 'var(--color-ink-secondary)', borderLeft: '2px solid var(--color-gold)' }}>{ex}</li>)}</ul></div>}
+                    {idiom.tip && <div className="rounded-lg p-3" style={{ background: 'var(--color-warning-soft)' }}><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-warning)' }}>记忆口诀</div><div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{idiom.tip}</div></div>}
+                    {idiom.oneLineSummary && <div className="rounded-lg p-3" style={{ background: 'var(--color-hairline-light)' }}><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>一句话总结</div><div className="text-sm font-medium" style={{ color: 'var(--color-ink)' }}>{idiom.oneLineSummary}</div></div>}
                   </div>
                 </FavoriteCard>
               );
             } else {
-              const { word, dayId, dayLabel } = item as { word: any; dayId: string; dayLabel: string };
+              const { word, dayId, dayLabel } = item;
               return (
                 <FavoriteCard key={`${dayId}-${word.id}`} name={word.name} pronunciation={word.pronunciation}
                   meaning={word.meaning} dayLabel={dayLabel} itemType="word"
                   onRemove={() => removeFavorite(dayId, word.id)}>
                   <div className="idiom-card-content space-y-3 animate-slide-up">
-                    <div className="mt-3"><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>使用语境</div><div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{word.usageContext}</div></div>
-                    {word.examples?.length > 0 && <div><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>例句</div><ul className="space-y-1">{word.examples.map((ex: any, i: number) => <li key={i} className="text-sm leading-relaxed pl-3" style={{ color: 'var(--color-ink-secondary)', borderLeft: '2px solid var(--color-accent)' }}>{ex.text}{ex.source && <span className="text-xs ml-1" style={{ color: 'var(--color-ink-muted)' }}>— {ex.source}</span>}</li>)}</ul></div>}
-                    <div className="rounded-lg p-3" style={{ background: 'var(--color-hairline-light)' }}><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>一句话总结</div><div className="text-sm font-medium" style={{ color: 'var(--color-ink)' }}>{word.oneLineSummary}</div></div>
+                    {word.usageContext && <div className="mt-3"><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>使用语境</div><div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{word.usageContext}</div></div>}
+                    {word.examples?.length > 0 && <div><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>例句</div><ul className="space-y-1">{word.examples.map((ex: WordExample, i: number) => <li key={i} className="text-sm leading-relaxed pl-3" style={{ color: 'var(--color-ink-secondary)', borderLeft: '2px solid var(--color-accent)' }}>{ex.text}{ex.source && <span className="text-xs ml-1" style={{ color: 'var(--color-ink-muted)' }}>— {ex.source}</span>}</li>)}</ul></div>}
+                    {word.oneLineSummary && <div className="rounded-lg p-3" style={{ background: 'var(--color-hairline-light)' }}><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>一句话总结</div><div className="text-sm font-medium" style={{ color: 'var(--color-ink)' }}>{word.oneLineSummary}</div></div>}
                   </div>
                 </FavoriteCard>
               );

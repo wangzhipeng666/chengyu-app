@@ -8,7 +8,6 @@ import WrongPage from './pages/WrongPage';
 import FavoritesPage from './pages/FavoritesPage';
 import PdfPage from './pages/PdfPage';
 import './App.css';
-/* eslint-disable @typescript-eslint/no-unused-vars */
 
 function useIsDesktop() {
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
@@ -50,9 +49,6 @@ function BottomNav() {
 
 function SideNav() {
   const [open, setOpen] = useState(false);
-  const location = useLocation();
-
-  useEffect(() => { setOpen(false); }, [location.pathname]);
 
   const navItems = [
     { to: '/', icon: Home, label: '首页' },
@@ -79,6 +75,7 @@ function SideNav() {
             key={to}
             to={to}
             end={to === '/'}
+            onClick={() => setOpen(false)}
             className={({ isActive }) =>
               `side-nav-item ${isActive ? 'active' : ''}`
             }

@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Search, Heart, ChevronDown, ChevronUp, BookOpen, ArrowUp } from 'lucide-react';
 import { useStore } from '../store/useStore';
-import { loadDays, getAllIdioms, getAllWords } from '../data';
+import { loadDays } from '../data';
 import type { Idiom, Word, DayData } from '../types';
 
 // 高亮例句中的关键词
@@ -41,7 +41,14 @@ function IdiomCard({ idiom, dayId }: { idiom: Idiom; dayId: string }) {
           <p className="text-sm mt-1" style={{ color: 'var(--color-ink-secondary)' }}>{idiom.meaning}</p>
         </div>
         <div className="flex items-center gap-2 ml-2">
-          <button onClick={(e) => { e.stopPropagation(); fav ? removeFavorite(dayId, idiom.id) : addFavorite(dayId, idiom.id, 'idiom'); }}
+          <button onClick={(e) => {
+            e.stopPropagation();
+            if (fav) {
+              removeFavorite(dayId, idiom.id);
+            } else {
+              addFavorite(dayId, idiom.id, 'idiom');
+            }
+          }}
             className="p-1.5 rounded-lg transition-colors" style={{ background: fav ? 'var(--color-error-soft)' : 'transparent' }}>
             <Heart size={18} style={{ color: fav ? 'var(--color-error)' : 'var(--color-ink-muted)' }} fill={fav ? 'var(--color-error)' : 'none'} />
           </button>
@@ -51,12 +58,12 @@ function IdiomCard({ idiom, dayId }: { idiom: Idiom; dayId: string }) {
       {expanded && (
         <div className="idiom-card-content space-y-3 animate-slide-up">
           {idiom.origin && <div className="mt-3"><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>出处</div><div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{idiom.origin}</div></div>}
-          <div><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>用法</div><div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{idiom.usage}</div></div>
+          {idiom.usage && <div><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>用法</div><div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{idiom.usage}</div></div>}
           {idiom.structure && <div><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>结构特点</div><div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{idiom.structure}</div></div>}
           {idiom.collocations && idiom.collocations.length > 0 && <div><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>常见搭配</div><div className="flex flex-wrap gap-1">{idiom.collocations.map((col, i) => <span key={i} className="tag tag-primary">{col}</span>)}</div></div>}
           {idiom.examples && idiom.examples.length > 0 && <div><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>例句</div><ul className="space-y-1">{idiom.examples.map((ex, i) => <li key={i} className="text-sm leading-relaxed pl-3" style={{ color: 'var(--color-ink-secondary)', borderLeft: '2px solid var(--color-gold)' }}><HighlightText text={ex} keyword={idiom.name} /></li>)}</ul></div>}
-          <div className="rounded-lg p-3" style={{ background: 'var(--color-warning-soft)' }}><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-warning)' }}>记忆口诀</div><div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{idiom.tip}</div></div>
-          <div className="rounded-lg p-3" style={{ background: 'var(--color-hairline-light)' }}><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>一句话总结</div><div className="text-sm font-medium" style={{ color: 'var(--color-ink)' }}>{idiom.oneLineSummary}</div></div>
+          {idiom.tip && <div className="rounded-lg p-3" style={{ background: 'var(--color-warning-soft)' }}><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-warning)' }}>记忆口诀</div><div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{idiom.tip}</div></div>}
+          {idiom.oneLineSummary && <div className="rounded-lg p-3" style={{ background: 'var(--color-hairline-light)' }}><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>一句话总结</div><div className="text-sm font-medium" style={{ color: 'var(--color-ink)' }}>{idiom.oneLineSummary}</div></div>}
         </div>
       )}
     </div>
@@ -82,7 +89,14 @@ function WordCard({ word, dayId }: { word: Word; dayId: string }) {
           <p className="text-sm mt-1" style={{ color: 'var(--color-ink-secondary)' }}>{word.meaning}</p>
         </div>
         <div className="flex items-center gap-2 ml-2">
-          <button onClick={(e) => { e.stopPropagation(); fav ? removeFavorite(dayId, word.id) : addFavorite(dayId, word.id, 'word'); }}
+          <button onClick={(e) => {
+            e.stopPropagation();
+            if (fav) {
+              removeFavorite(dayId, word.id);
+            } else {
+              addFavorite(dayId, word.id, 'word');
+            }
+          }}
             className="p-1.5 rounded-lg transition-colors" style={{ background: fav ? 'var(--color-error-soft)' : 'transparent' }}>
             <Heart size={18} style={{ color: fav ? 'var(--color-error)' : 'var(--color-ink-muted)' }} fill={fav ? 'var(--color-error)' : 'none'} />
           </button>
@@ -91,11 +105,11 @@ function WordCard({ word, dayId }: { word: Word; dayId: string }) {
       </div>
       {expanded && (
         <div className="idiom-card-content space-y-3 animate-slide-up">
-          <div className="mt-3"><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>使用语境</div><div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{word.usageContext}</div></div>
+          {word.usageContext && <div className="mt-3"><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>使用语境</div><div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{word.usageContext}</div></div>}
           {word.examples.length > 0 && <div><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>例句</div><ul className="space-y-1">{word.examples.map((ex, i) => <li key={i} className="text-sm leading-relaxed pl-3" style={{ color: 'var(--color-ink-secondary)', borderLeft: '2px solid var(--color-accent)' }}><HighlightText text={ex.text} keyword={word.name} />{ex.source && <span className="text-xs ml-1" style={{ color: 'var(--color-ink-muted)' }}>— {ex.source}</span>}</li>)}</ul></div>}
           {word.notes && <div className="rounded-lg p-3" style={{ background: 'var(--color-error-soft)' }}><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-error)' }}>注意事项</div><div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{word.notes}</div></div>}
           {word.analysisAngles.length > 0 && <div><div className="text-xs font-medium mb-2" style={{ color: 'var(--color-ink-muted)' }}>辨析角度</div><div className="space-y-2">{word.analysisAngles.map((angle, i) => <div key={i} className="rounded-lg p-2" style={{ background: 'var(--color-primary-soft)' }}><div className="text-xs font-medium" style={{ color: 'var(--color-primary)' }}>{angle.dimension}</div><div className="text-sm mt-0.5" style={{ color: 'var(--color-ink-secondary)' }}>{angle.description}</div></div>)}</div></div>}
-          <div className="rounded-lg p-3" style={{ background: 'var(--color-hairline-light)' }}><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>一句话总结</div><div className="text-sm font-medium" style={{ color: 'var(--color-ink)' }}>{word.oneLineSummary}</div></div>
+          {word.oneLineSummary && <div className="rounded-lg p-3" style={{ background: 'var(--color-hairline-light)' }}><div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>一句话总结</div><div className="text-sm font-medium" style={{ color: 'var(--color-ink)' }}>{word.oneLineSummary}</div></div>}
         </div>
       )}
     </div>
@@ -126,8 +140,22 @@ export default function DictionaryPage() {
     return () => window.removeEventListener('scroll', handler);
   }, []);
 
-  const allIdioms = useMemo(() => getAllIdioms(), [daysList]);
-  const allWords = useMemo(() => getAllWords(), [daysList]);
+  const allIdioms = useMemo(
+    () => daysList.flatMap(day =>
+      day.groups.flatMap(group =>
+        (group.idioms || []).map(idiom => ({ idiom, dayId: day.id, groupName: group.name }))
+      )
+    ),
+    [daysList]
+  );
+  const allWords = useMemo(
+    () => daysList.flatMap(day =>
+      day.groups.flatMap(group =>
+        (group.words || []).map(word => ({ word, dayId: day.id, groupName: group.name }))
+      )
+    ),
+    [daysList]
+  );
 
   // Collect all groups from filtered days
   const allGroups = useMemo(() => {
@@ -156,10 +184,14 @@ export default function DictionaryPage() {
     if (typeFilter === 'word') return [];
     if (search.trim()) {
       const q = search.trim().toLowerCase();
-      result = result.filter(i => i.idiom.name.toLowerCase().includes(q) || i.idiom.meaning.toLowerCase().includes(q) || i.idiom.oneLineSummary.toLowerCase().includes(q));
+      result = result.filter(i =>
+        i.idiom.name.toLowerCase().includes(q) ||
+        i.idiom.meaning.toLowerCase().includes(q) ||
+        (i.idiom.oneLineSummary || '').toLowerCase().includes(q)
+      );
     }
     return result;
-  }, [allIdioms, activeDay, activeGroup, search, typeFilter]);
+  }, [allIdioms, activeDay, activeGroup, search, typeFilter, daysList]);
 
   const filteredWords = useMemo(() => {
     let result = allWords;
@@ -175,10 +207,14 @@ export default function DictionaryPage() {
     if (typeFilter === 'idiom') return [];
     if (search.trim()) {
       const q = search.trim().toLowerCase();
-      result = result.filter(w => w.word.name.toLowerCase().includes(q) || w.word.meaning.toLowerCase().includes(q) || w.word.oneLineSummary.toLowerCase().includes(q));
+      result = result.filter(w =>
+        w.word.name.toLowerCase().includes(q) ||
+        w.word.meaning.toLowerCase().includes(q) ||
+        (w.word.oneLineSummary || '').toLowerCase().includes(q)
+      );
     }
     return result;
-  }, [allWords, activeDay, activeGroup, search, typeFilter]);
+  }, [allWords, activeDay, activeGroup, search, typeFilter, daysList]);
 
   const hasIdioms = daysList.some(d => d.groups.some(g => g.idioms && g.idioms.length > 0));
   const hasWords = daysList.some(d => d.groups.some(g => g.words && g.words.length > 0));

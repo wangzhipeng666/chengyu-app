@@ -9,6 +9,24 @@ import { getDay } from '../data';
 import PdfModal from '../components/PdfModal';
 import type { Idiom, Word, Quiz, DayData } from '../types';
 
+// 高亮例句中的关键词
+function HighlightText({ text, keyword }: { text: string | { text: string; source?: string }; keyword: string }) {
+  const str = typeof text === 'string' ? text : text?.text ?? '';
+  if (!keyword) return <>{str}</>;
+  const parts = str.split(new RegExp(`(${keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'g'));
+  return (
+    <>
+      {parts.map((part, i) =>
+        part === keyword ? (
+          <strong key={i} style={{ color: 'var(--color-primary)', fontWeight: 600 }}>{part}</strong>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </>
+  );
+}
+
 // ============================================
 // 成语卡片
 // ============================================
@@ -37,7 +55,11 @@ function IdiomCard({ idiom, dayId }: { idiom: Idiom; dayId: string }) {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              fav ? removeFavorite(dayId, idiom.id) : addFavorite(dayId, idiom.id, 'idiom');
+              if (fav) {
+                removeFavorite(dayId, idiom.id);
+              } else {
+                addFavorite(dayId, idiom.id, 'idiom');
+              }
             }}
             className="p-1.5 rounded-lg transition-colors"
             style={{ background: fav ? 'var(--color-error-soft)' : 'transparent' }}
@@ -56,10 +78,12 @@ function IdiomCard({ idiom, dayId }: { idiom: Idiom; dayId: string }) {
               <div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{idiom.origin}</div>
             </div>
           )}
-          <div>
-            <div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>用法</div>
-            <div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{idiom.usage}</div>
-          </div>
+          {idiom.usage && (
+            <div>
+              <div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>用法</div>
+              <div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{idiom.usage}</div>
+            </div>
+          )}
           {idiom.structure && (
             <div>
               <div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>结构特点</div>
@@ -82,20 +106,24 @@ function IdiomCard({ idiom, dayId }: { idiom: Idiom; dayId: string }) {
               <ul className="space-y-1">
                 {idiom.examples.map((ex, i) => (
                   <li key={i} className="text-sm leading-relaxed pl-3" style={{ color: 'var(--color-ink-secondary)', borderLeft: '2px solid var(--color-gold)' }}>
-                    {ex}
+                    <HighlightText text={ex} keyword={idiom.name} />
                   </li>
                 ))}
               </ul>
             </div>
           )}
-          <div className="rounded-lg p-3" style={{ background: 'var(--color-warning-soft)' }}>
-            <div className="text-xs font-medium mb-1" style={{ color: 'var(--color-warning)' }}>记忆口诀</div>
-            <div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{idiom.tip}</div>
-          </div>
-          <div className="rounded-lg p-3" style={{ background: 'var(--color-hairline-light)' }}>
-            <div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>一句话总结</div>
-            <div className="text-sm font-medium" style={{ color: 'var(--color-ink)' }}>{idiom.oneLineSummary}</div>
-          </div>
+          {idiom.tip && (
+            <div className="rounded-lg p-3" style={{ background: 'var(--color-warning-soft)' }}>
+              <div className="text-xs font-medium mb-1" style={{ color: 'var(--color-warning)' }}>记忆口诀</div>
+              <div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{idiom.tip}</div>
+            </div>
+          )}
+          {idiom.oneLineSummary && (
+            <div className="rounded-lg p-3" style={{ background: 'var(--color-hairline-light)' }}>
+              <div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>一句话总结</div>
+              <div className="text-sm font-medium" style={{ color: 'var(--color-ink)' }}>{idiom.oneLineSummary}</div>
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -130,7 +158,11 @@ function WordCard({ word, dayId }: { word: Word; dayId: string }) {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              fav ? removeFavorite(dayId, word.id) : addFavorite(dayId, word.id, 'word');
+              if (fav) {
+                removeFavorite(dayId, word.id);
+              } else {
+                addFavorite(dayId, word.id, 'word');
+              }
             }}
             className="p-1.5 rounded-lg transition-colors"
             style={{ background: fav ? 'var(--color-error-soft)' : 'transparent' }}
@@ -143,17 +175,19 @@ function WordCard({ word, dayId }: { word: Word; dayId: string }) {
 
       {expanded && (
         <div className="idiom-card-content space-y-3 animate-slide-up">
-          <div className="mt-3">
-            <div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>使用语境</div>
-            <div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{word.usageContext}</div>
-          </div>
+          {word.usageContext && (
+            <div className="mt-3">
+              <div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>使用语境</div>
+              <div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{word.usageContext}</div>
+            </div>
+          )}
           {word.examples.length > 0 && (
             <div>
               <div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>例句</div>
               <ul className="space-y-1">
                 {word.examples.map((ex, i) => (
                   <li key={i} className="text-sm leading-relaxed pl-3" style={{ color: 'var(--color-ink-secondary)', borderLeft: '2px solid var(--color-accent)' }}>
-                    {ex.text}
+                    <HighlightText text={ex.text} keyword={word.name} />
                     {ex.source && <span className="text-xs ml-1" style={{ color: 'var(--color-ink-muted)' }}>— {ex.source}</span>}
                   </li>
                 ))}
@@ -179,10 +213,12 @@ function WordCard({ word, dayId }: { word: Word; dayId: string }) {
               </div>
             </div>
           )}
-          <div className="rounded-lg p-3" style={{ background: 'var(--color-hairline-light)' }}>
-            <div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>一句话总结</div>
-            <div className="text-sm font-medium" style={{ color: 'var(--color-ink)' }}>{word.oneLineSummary}</div>
-          </div>
+          {word.oneLineSummary && (
+            <div className="rounded-lg p-3" style={{ background: 'var(--color-hairline-light)' }}>
+              <div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>一句话总结</div>
+              <div className="text-sm font-medium" style={{ color: 'var(--color-ink)' }}>{word.oneLineSummary}</div>
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -194,20 +230,16 @@ function WordCard({ word, dayId }: { word: Word; dayId: string }) {
 // ============================================
 function QuizSection({ dayId, quizzes }: { dayId: string; quizzes: Quiz[] }) {
   const { addWrongQuestion, removeWrongQuestion, recordAnswer, markQuizCompleted, completedQuizzes, markDayReviewed } = useStore();
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(() => {
+    const firstUncompleted = quizzes.findIndex(q => !completedQuizzes.includes(quizKey(dayId, q.id)));
+    return firstUncompleted >= 0 ? firstUncompleted : 0;
+  });
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const quiz = quizzes[currentIndex];
   const isCorrect = selectedAnswer === quiz?.answer;
   const allCompleted = quizzes.length > 0 && quizzes.every(q => completedQuizzes.includes(quizKey(dayId, q.id)));
-
-  useEffect(() => {
-    const firstUncompleted = quizzes.findIndex(q => !completedQuizzes.includes(quizKey(dayId, q.id)));
-    setCurrentIndex(firstUncompleted >= 0 ? firstUncompleted : 0);
-    setSelectedAnswer(null);
-    setIsSubmitted(false);
-  }, [dayId, quizzes, completedQuizzes]);
 
   const handleSubmit = useCallback(() => {
     if (!selectedAnswer || !quiz) return;
@@ -555,7 +587,7 @@ export default function DayPage() {
       {/* Quiz Tab */}
       {activeTab === 'quiz' && (
         <div className="pb-20">
-          <QuizSection dayId={day.id} quizzes={day.quizzes} />
+          <QuizSection key={day.id} dayId={day.id} quizzes={day.quizzes} />
         </div>
       )}
 
