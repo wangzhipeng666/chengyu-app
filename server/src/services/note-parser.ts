@@ -1,0 +1,60 @@
+import fs from 'fs';
+import path from 'path';
+
+const PROMPT_PATH = path.join(__dirname, '../../prompts/parse-note.md');
+
+interface ParseResult {
+  dayLabel: string;
+  date?: string;
+  summary?: string;
+  groups: any[];
+  quizzes: any[];
+}
+
+export async function parseNote(text: string, dayNumber: number): Promise<ParseResult> {
+  const prompt = fs.readFileSync(PROMPT_PATH, 'utf-8');
+
+  // 调用 Claude API
+  const apiKey = process.env.CLAUDE_API_KEY;
+  if (!apiKey) {
+    throw new Error('CLAUDE_API_KEY environment variable is required');
+  }
+
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 8096,
+      system: prompt,
+      messages: [
+        {
+          role: 'user',
+          content: `请解析以下笔记内容，生成第${dayNumber}天的数据。确保输出有效的 JSON 格式。\n\n${text}`,
+        },
+      ],
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`Claude API error: ${error}`);
+  }
+
+  const data = await response.json() as any;
+  const content = data.content[0]?.text;
+
+  if (!content) {
+    throw new Error('No content in Claude API response');
+  }
+
+  // 提取 JSON（可能被 markdown 代码块包裹）
+  const jsonMatch = content.match(/```json?\s*\n?([\s\S]*?)\n?```/);
+  const jsonStr = jsonMatch ? jsonMatch[1] : content;
+
+  return JSON.parse(jsonStr);
+}

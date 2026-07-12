@@ -5,6 +5,7 @@ import { getDb } from './db';
 import daysRouter from './routes/days';
 import searchRouter from './routes/search';
 import progressRouter from './routes/progress';
+import notesRouter from './routes/notes';
 
 const app = express();
 const PORT = process.env.PORT || 4917;
@@ -19,6 +20,7 @@ getDb();
 app.use('/api/days', daysRouter);
 app.use('/api/search', searchRouter);
 app.use('/api/progress', progressRouter);
+app.use('/api/notes', notesRouter);
 
 // Health check
 app.get('/api/health', (_req, res) => {

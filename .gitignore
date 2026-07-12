@@ -1,1 +1,6 @@
 start.sh
+server/uploads/
+server/data/*.db
+server/node_modules/
+client/node_modules/
+client/dist/

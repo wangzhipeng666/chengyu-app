@@ -7,6 +7,7 @@ import DictionaryPage from './pages/DictionaryPage';
 import WrongPage from './pages/WrongPage';
 import FavoritesPage from './pages/FavoritesPage';
 import PdfPage from './pages/PdfPage';
+import NoteImportPage from './pages/NoteImportPage';
 import './App.css';
 
 function useIsDesktop() {
@@ -116,6 +117,8 @@ function AppLayout() {
             <Route path="/wrong" element={<WrongPage />} />
             <Route path="/favorites" element={<FavoritesPage />} />
             <Route path="/pdf/:dayId" element={<PdfPage />} />
+          <Route path="/import" element={<NoteImportPage />} />
+            <Route path="/import" element={<NoteImportPage />} />
           </Routes>
         </div>
       </div>
