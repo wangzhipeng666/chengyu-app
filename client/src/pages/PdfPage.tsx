@@ -21,11 +21,11 @@ const PDF_MAP: Record<string, { file: string; title: string }> = {
   'day-17': { file: '/pdfs/day17.pdf', title: '第17天笔记 - 闫洪泉' },
   'day-18': { file: '/pdfs/day18.pdf', title: '第18天笔记 - 张琳卉' },
   'day-19': { file: '/pdfs/day19.pdf', title: '第19天笔记 - 张琳卉' },
-  'day-20': { file: '/pdfs/2026.07.02+粉笔千词计划·1000词精讲训练营（20）+安妮+（笔记）（粉笔千词计划·1000词精讲训练营）.pdf', title: '第20天笔记 - 安妮' },
-  'day-21': { file: '/pdfs/2026.07.03+粉笔千词计划·1000词精讲训练营（21）+安妮+（笔记）（粉笔千词计划·1000词精讲训练营）.pdf', title: '第21天笔记 - 安妮' },
-  'day-22': { file: '/pdfs/2026.07.06+粉笔千词计划·1000词精讲训练营（22）+司琦（笔记）（粉笔千词计划·1000词精讲训练营）.pdf', title: '第22天笔记 - 司琦' },
-  'day-23': { file: '/pdfs/2026.07.07+粉笔千词计划·1000词精讲训练营（23）+张琳卉（笔记）（粉笔千词计划·1000词精讲训练营）.pdf', title: '第23天笔记 - 张琳卉' },
-  'day-24': { file: '/pdfs/2026.07.08+粉笔千词计划·1000词精讲训练营（24）+张琳卉（笔记）（粉笔千词计划·1000词精讲训练营）.pdf', title: '第24天笔记 - 张琳卉' },
+  'day-20': { file: '/pdfs/day20.pdf', title: '第20天笔记 - 安妮' },
+  'day-21': { file: '/pdfs/day21.pdf', title: '第21天笔记 - 安妮' },
+  'day-22': { file: '/pdfs/day22.pdf', title: '第22天笔记 - 司琦' },
+  'day-23': { file: '/pdfs/day23.pdf', title: '第23天笔记 - 张琳卉' },
+  'day-24': { file: '/pdfs/day24.pdf', title: '第24天笔记 - 张琳卉' },
 };
 
 export default function PdfPage() {
