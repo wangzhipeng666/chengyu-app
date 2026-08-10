@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, NavLink, useLocation } from 'react-router-dom';
-import { Home, BookOpen, Heart, Menu, X } from 'lucide-react';
+import { Home, BookOpen, Heart, Menu, X, Upload, CircleAlert } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import HomePage from './pages/HomePage';
 import DayPage from './pages/DayPage';
@@ -24,12 +24,13 @@ function BottomNav() {
   const navItems = [
     { to: '/', icon: Home, label: '首页' },
     { to: '/dictionary', icon: BookOpen, label: '词典' },
+    { to: '/wrong', icon: CircleAlert, label: '错题' },
     { to: '/favorites', icon: Heart, label: '收藏' },
   ];
 
   return (
     <nav className="bottom-nav">
-      <div className="max-w-lg mx-auto flex justify-around items-center h-14">
+      <div className="max-w-lg mx-auto flex justify-around items-center h-16">
         {navItems.map(({ to, icon: Icon, label }) => (
           <NavLink
             key={to}
@@ -55,7 +56,8 @@ function SideNav() {
     { to: '/', icon: Home, label: '首页' },
     { to: '/dictionary', icon: BookOpen, label: '词典' },
     { to: '/favorites', icon: Heart, label: '收藏' },
-    { to: '/wrong', icon: Menu, label: '错题本' },
+    { to: '/wrong', icon: CircleAlert, label: '错题本' },
+    { to: '/import', icon: Upload, label: '导入笔记' },
   ];
 
   return (
@@ -117,7 +119,6 @@ function AppLayout() {
             <Route path="/wrong" element={<WrongPage />} />
             <Route path="/favorites" element={<FavoritesPage />} />
             <Route path="/pdf/:dayId" element={<PdfPage />} />
-          <Route path="/import" element={<NoteImportPage />} />
             <Route path="/import" element={<NoteImportPage />} />
           </Routes>
         </div>
@@ -136,6 +137,8 @@ function AppLayout() {
           <Route path="/dictionary/:dayId" element={<DictionaryPage />} />
           <Route path="/wrong" element={<WrongPage />} />
           <Route path="/favorites" element={<FavoritesPage />} />
+          <Route path="/pdf/:dayId" element={<PdfPage />} />
+          <Route path="/import" element={<NoteImportPage />} />
         </Routes>
         {!hideNav && <BottomNav />}
       </div>

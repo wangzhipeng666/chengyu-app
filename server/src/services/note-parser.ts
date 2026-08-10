@@ -1,10 +1,9 @@
 import fs from 'fs';
-import path from 'path';
-
-const PROMPT_PATH = path.join(__dirname, '../../prompts/parse-note.md');
+import { PARSE_PROMPT_PATH } from '../project-paths';
 
 interface ParseResult {
-  dayLabel: string;
+  id: string;
+  label: string;
   date?: string;
   summary?: string;
   groups: any[];
@@ -12,7 +11,7 @@ interface ParseResult {
 }
 
 export async function parseNote(text: string, dayNumber: number): Promise<ParseResult> {
-  const prompt = fs.readFileSync(PROMPT_PATH, 'utf-8');
+  const prompt = fs.readFileSync(PARSE_PROMPT_PATH, 'utf-8');
 
   // 调用 Claude API
   const apiKey = process.env.CLAUDE_API_KEY;
@@ -56,5 +55,18 @@ export async function parseNote(text: string, dayNumber: number): Promise<ParseR
   const jsonMatch = content.match(/```json?\s*\n?([\s\S]*?)\n?```/);
   const jsonStr = jsonMatch ? jsonMatch[1] : content;
 
-  return JSON.parse(jsonStr);
+  const parsed = JSON.parse(jsonStr) as Partial<ParseResult> & { dayLabel?: string };
+  const result: ParseResult = {
+    ...parsed,
+    id: `day-${dayNumber}`,
+    label: parsed.label || parsed.dayLabel || `第${dayNumber}天`,
+    groups: parsed.groups || [],
+    quizzes: parsed.quizzes || [],
+  };
+
+  if (!Array.isArray(result.groups) || !Array.isArray(result.quizzes)) {
+    throw new Error('AI 返回的数据结构不完整');
+  }
+
+  return result;
 }

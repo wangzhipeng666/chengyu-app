@@ -2,5 +2,6 @@ start.sh
 server/uploads/
 server/data/*.db
 server/node_modules/
+server/dist/
 client/node_modules/
 client/dist/

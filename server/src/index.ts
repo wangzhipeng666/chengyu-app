@@ -11,7 +11,7 @@ const app = express();
 const PORT = process.env.PORT || 4917;
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '2mb' }));
 
 // Initialize database
 getDb();

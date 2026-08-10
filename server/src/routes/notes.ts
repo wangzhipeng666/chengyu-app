@@ -5,17 +5,17 @@ import fs from 'fs';
 import { extractTextFromPdf } from '../services/pdf-extractor';
 import { parseNote } from '../services/note-parser';
 import { saveDayData, seedDayToDb } from '../services/note-saver';
+import { PUBLIC_PDF_DIR, UPLOAD_DIR } from '../project-paths';
 
 const router = Router();
 
 // 配置 multer 用于文件上传
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadDir = path.join(__dirname, '../../uploads');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
+    if (!fs.existsSync(UPLOAD_DIR)) {
+      fs.mkdirSync(UPLOAD_DIR, { recursive: true });
     }
-    cb(null, uploadDir);
+    cb(null, UPLOAD_DIR);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -47,16 +47,15 @@ router.post('/extract', upload.single('file'), async (req, res) => {
 
     const text = await extractTextFromPdf(req.file.path);
 
-    // 清理临时文件
-    fs.unlinkSync(req.file.path);
-
     res.json({
       text,
       fileName: req.file.originalname,
     });
   } catch (error) {
     console.error('PDF extract error:', error);
-    res.status(500).json({ error: 'PDF 文本提取失败' });
+    res.status(422).json({ error: error instanceof Error ? error.message : 'PDF 文本提取失败' });
+  } finally {
+    if (req.file?.path) fs.rmSync(req.file.path, { force: true });
   }
 });
 
@@ -65,7 +64,7 @@ router.post('/parse', async (req, res) => {
   try {
     const { text, dayNumber } = req.body;
 
-    if (!text || !dayNumber) {
+    if (typeof text !== 'string' || !text.trim() || !Number.isInteger(dayNumber) || dayNumber < 1) {
       res.status(400).json({ error: '请提供 text 和 dayNumber' });
       return;
     }
@@ -74,7 +73,7 @@ router.post('/parse', async (req, res) => {
     res.json({ dayData });
   } catch (error) {
     console.error('Parse error:', error);
-    res.status(500).json({ error: '笔记解析失败' });
+    res.status(500).json({ error: error instanceof Error ? error.message : '笔记解析失败' });
   }
 });
 
@@ -106,19 +105,30 @@ router.post('/upload-pdf', upload.single('file'), async (req, res) => {
       return;
     }
 
-    const targetDir = path.join(__dirname, '../../client/public/pdfs');
-    const targetPath = path.join(targetDir, req.file.originalname);
+    const dayNumber = Number(req.body.dayNumber);
+    if (!Number.isInteger(dayNumber) || dayNumber < 1) {
+      res.status(400).json({ error: '请提供有效的 dayNumber' });
+      return;
+    }
 
-    fs.copyFileSync(req.file.path, targetPath);
-    fs.unlinkSync(req.file.path);
+    fs.mkdirSync(PUBLIC_PDF_DIR, { recursive: true });
+    const safeName = `day${dayNumber}.pdf`;
+    const targetPath = path.join(PUBLIC_PDF_DIR, safeName);
+
+    fs.copyFileSync(req.file.path, targetPath, fs.constants.COPYFILE_EXCL);
 
     res.json({
       success: true,
-      path: `/pdfs/${req.file.originalname}`,
+      path: `/pdfs/${safeName}`,
     });
   } catch (error) {
     console.error('Upload PDF error:', error);
-    res.status(500).json({ error: 'PDF 上传失败' });
+    const message = error instanceof Error && 'code' in error && error.code === 'EEXIST'
+      ? '同名 PDF 已存在，请重命名后再上传'
+      : 'PDF 上传失败';
+    res.status(500).json({ error: message });
+  } finally {
+    if (req.file?.path) fs.rmSync(req.file.path, { force: true });
   }
 });
 

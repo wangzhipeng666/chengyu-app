@@ -1,8 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { getDb } from '../db';
-
-const DATA_DIR = path.join(__dirname, '../../client/src/data');
+import { DAY_DATA_DIR } from '../project-paths';
 
 interface DayData {
   id: string;
@@ -14,13 +13,20 @@ interface DayData {
 }
 
 export function saveDayData(dayData: DayData, overwrite = false): { success: boolean; dayId: string } {
-  const filePath = path.join(DATA_DIR, `${dayData.id}.json`);
+  if (!/^day-[1-9]\d*$/.test(dayData.id)) {
+    throw new Error('dayData.id 格式无效，应为 day-N');
+  }
+
+  const filePath = path.join(DAY_DATA_DIR, `${dayData.id}.json`);
 
   if (!overwrite && fs.existsSync(filePath)) {
     throw new Error(`${dayData.id}.json 已存在，使用 overwrite=true 覆盖`);
   }
 
-  fs.writeFileSync(filePath, JSON.stringify(dayData, null, 2), 'utf-8');
+  fs.mkdirSync(DAY_DATA_DIR, { recursive: true });
+  const tempPath = `${filePath}.tmp`;
+  fs.writeFileSync(tempPath, `${JSON.stringify(dayData, null, 2)}\n`, 'utf-8');
+  fs.renameSync(tempPath, filePath);
   return { success: true, dayId: dayData.id };
 }
 

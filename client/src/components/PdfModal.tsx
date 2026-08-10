@@ -1,26 +1,5 @@
 import { ArrowLeft, FileText } from 'lucide-react';
-
-const PDF_MAP: Record<string, { file: string; title: string }> = {
-  'day-1': { file: '/pdfs/day1.pdf', title: '第1天笔记 - 夏雨' },
-  'day-2': { file: '/pdfs/day2.pdf', title: '第2天笔记 - 姜然' },
-  'day-3': { file: '/pdfs/day3.pdf', title: '第3天笔记 - 夏雨' },
-  'day-4': { file: '/pdfs/day4.pdf', title: '第4天笔记 - 夏雨' },
-  'day-5': { file: '/pdfs/day5.pdf', title: '第5天笔记 - 刘柏衡' },
-  'day-6': { file: '/pdfs/day6.pdf', title: '第6天笔记 - 辛然' },
-  'day-7': { file: '/pdfs/day7.pdf', title: '第7天笔记 - 江雅' },
-  'day-8': { file: '/pdfs/day8.pdf', title: '第8天笔记 - 李玟冰' },
-  'day-9': { file: '/pdfs/day9.pdf', title: '第9天笔记 - 刘柏衡' },
-  'day-10': { file: '/pdfs/day10.pdf', title: '第10天笔记 - 辛然' },
-  'day-11': { file: '/pdfs/day11.pdf', title: '第11天笔记 - 辛然' },
-  'day-12': { file: '/pdfs/day12.pdf', title: '第12天笔记 - 李玟冰' },
-  'day-13': { file: '/pdfs/day13.pdf', title: '第13天笔记 - 辛然' },
-  'day-14': { file: '/pdfs/day14.pdf', title: '第14天笔记 - 辛然' },
-  'day-15': { file: '/pdfs/day15.pdf', title: '第15天笔记 - 闫洪泉' },
-  'day-16': { file: '/pdfs/day16.pdf', title: '第16天笔记 - 闫洪泉' },
-  'day-17': { file: '/pdfs/day17.pdf', title: '第17天笔记 - 闫洪泉' },
-  'day-18': { file: '/pdfs/day18.pdf', title: '第18天笔记 - 张琳卉' },
-  'day-19': { file: '/pdfs/day19.pdf', title: '第19天笔记 - 张琳卉' },
-};
+import { PDF_MAP } from '../pdfMap';
 
 interface PdfModalProps {
   dayId: string;

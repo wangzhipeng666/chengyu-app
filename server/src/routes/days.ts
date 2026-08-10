@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { getDb } from '../db';
+import { parseIdiom, parseQuiz, parseWord } from '../serializers';
 
 const router = Router();
 
@@ -39,31 +40,6 @@ router.get('/:id', (req, res) => {
 
   // Get quizzes for this day
   const quizzes = db.prepare('SELECT * FROM quizzes WHERE day_id = ? ORDER BY rowid').all(id) as any[];
-
-  // Parse JSON fields
-  const parseIdiom = (i: any) => ({
-    ...i,
-    oneLineSummary: i.one_line_summary,
-    collocations: JSON.parse(i.collocations || '[]'),
-    examples: JSON.parse(i.examples || '[]'),
-    synonyms: JSON.parse(i.synonyms || '[]'),
-  });
-
-  const parseWord = (w: any) => ({
-    ...w,
-    oneLineSummary: w.one_line_summary,
-    usageContext: w.usage_context,
-    examples: JSON.parse(w.examples || '[]'),
-    analysisAngles: JSON.parse(w.analysis_angles || '[]'),
-    synonyms: JSON.parse(w.synonyms || '[]'),
-  });
-
-  const parseQuiz = (q: any) => ({
-    ...q,
-    options: JSON.parse(q.options || '[]'),
-    analysis: JSON.parse(q.analysis || '{}'),
-    tips: JSON.parse(q.tips || '[]'),
-  });
 
   // Attach idioms/words to groups
   const groupsWithContent = groups.map(g => ({

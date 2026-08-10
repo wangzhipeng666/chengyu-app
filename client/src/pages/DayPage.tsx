@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
   ArrowLeft, ArrowUp, ChevronDown, ChevronUp, Heart, Check, X,
@@ -7,6 +7,7 @@ import {
 import { useStore, quizKey } from '../store/useStore';
 import { getDay } from '../data';
 import PdfModal from '../components/PdfModal';
+import { isGradableQuiz } from '../quizUtils';
 import type { Idiom, Word, Quiz, DayData } from '../types';
 
 // 高亮例句中的关键词
@@ -37,7 +38,7 @@ function IdiomCard({ idiom, dayId }: { idiom: Idiom; dayId: string }) {
 
   return (
     <div className="idiom-card animate-slide-up">
-      <div className="idiom-card-header" onClick={() => setExpanded(!expanded)}>
+      <div className="idiom-card-header" role="button" tabIndex={0} aria-expanded={expanded} onClick={() => setExpanded(!expanded)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setExpanded(!expanded); } }}>
         <div className="flex-1">
           <div className="flex items-center gap-2">
             <h3 className="text-lg font-bold" style={{ color: 'var(--color-ink)', fontFamily: 'var(--fontFamilySerif)' }}>
@@ -140,7 +141,7 @@ function WordCard({ word, dayId }: { word: Word; dayId: string }) {
 
   return (
     <div className="idiom-card animate-slide-up" style={{ borderLeft: '3px solid var(--color-accent)' }}>
-      <div className="idiom-card-header" onClick={() => setExpanded(!expanded)}>
+      <div className="idiom-card-header" role="button" tabIndex={0} aria-expanded={expanded} onClick={() => setExpanded(!expanded)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setExpanded(!expanded); } }}>
         <div className="flex-1">
           <div className="flex items-center gap-2">
             <h3 className="text-lg font-bold" style={{ color: 'var(--color-ink)', fontFamily: 'var(--fontFamilySerif)' }}>
@@ -230,16 +231,20 @@ function WordCard({ word, dayId }: { word: Word; dayId: string }) {
 // ============================================
 function QuizSection({ dayId, quizzes }: { dayId: string; quizzes: Quiz[] }) {
   const { addWrongQuestion, removeWrongQuestion, recordAnswer, markQuizCompleted, completedQuizzes, markDayReviewed } = useStore();
+  const availableQuizzes = useMemo(
+    () => quizzes.filter(isGradableQuiz),
+    [quizzes]
+  );
   const [currentIndex, setCurrentIndex] = useState(() => {
-    const firstUncompleted = quizzes.findIndex(q => !completedQuizzes.includes(quizKey(dayId, q.id)));
+    const firstUncompleted = availableQuizzes.findIndex(q => !completedQuizzes.includes(quizKey(dayId, q.id)));
     return firstUncompleted >= 0 ? firstUncompleted : 0;
   });
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const quiz = quizzes[currentIndex];
+  const quiz = availableQuizzes[currentIndex];
   const isCorrect = selectedAnswer === quiz?.answer;
-  const allCompleted = quizzes.length > 0 && quizzes.every(q => completedQuizzes.includes(quizKey(dayId, q.id)));
+  const allCompleted = availableQuizzes.length > 0 && availableQuizzes.every(q => completedQuizzes.includes(quizKey(dayId, q.id)));
 
   const handleSubmit = useCallback(() => {
     if (!selectedAnswer || !quiz) return;
@@ -254,14 +259,14 @@ function QuizSection({ dayId, quizzes }: { dayId: string; quizzes: Quiz[] }) {
 
   const handleNext = useCallback(() => {
     if (quiz) markQuizCompleted(dayId, quiz.id);
-    if (currentIndex < quizzes.length - 1) {
+    if (currentIndex < availableQuizzes.length - 1) {
       setCurrentIndex(prev => prev + 1);
       setSelectedAnswer(null);
       setIsSubmitted(false);
     } else {
       markDayReviewed(dayId);
     }
-  }, [currentIndex, quizzes.length, quiz, dayId, markQuizCompleted, markDayReviewed]);
+  }, [currentIndex, availableQuizzes.length, quiz, dayId, markQuizCompleted, markDayReviewed]);
 
   const handleRetry = useCallback(() => {
     setSelectedAnswer(null);
@@ -269,11 +274,11 @@ function QuizSection({ dayId, quizzes }: { dayId: string; quizzes: Quiz[] }) {
   }, []);
 
   const handleRandom = useCallback(() => {
-    const randomIndex = Math.floor(Math.random() * quizzes.length);
+    const randomIndex = Math.floor(Math.random() * availableQuizzes.length);
     setCurrentIndex(randomIndex);
     setSelectedAnswer(null);
     setIsSubmitted(false);
-  }, [quizzes.length]);
+  }, [availableQuizzes.length]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -298,10 +303,36 @@ function QuizSection({ dayId, quizzes }: { dayId: string; quizzes: Quiz[] }) {
           <span className="text-4xl"> </span>
         </div>
         <h2 className="text-xl font-bold mb-2" style={{ color: 'var(--color-ink)' }}>恭喜完成所有题目！</h2>
-        <p className="text-sm mb-6" style={{ color: 'var(--color-ink-muted)' }}>共完成 {quizzes.length} 道题</p>
+        <p className="text-sm mb-6" style={{ color: 'var(--color-ink-muted)' }}>共完成 {availableQuizzes.length} 道题</p>
         <button onClick={() => { setCurrentIndex(0); setSelectedAnswer(null); setIsSubmitted(false); }} className="btn-primary inline-flex items-center gap-2">
           <RotateCcw size={18} /> 重新开始
         </button>
+      </div>
+    );
+  }
+
+  if (!quiz && quizzes.length > 0) {
+    return (
+      <div className="space-y-4">
+        <div className="status-banner" style={{ color: 'var(--color-warning)', background: 'var(--color-warning-soft)' }}>
+          本日题目已导入，答案与解析待后续笔记补充；当前仅供查看，暂不支持判分。
+        </div>
+        {quizzes.map((pendingQuiz, index) => (
+          <article key={pendingQuiz.id} className="card">
+            <div className="flex items-center justify-between gap-3 mb-3">
+              <span className="text-sm font-semibold" style={{ color: 'var(--color-primary)' }}>第 {index + 1} 题</span>
+              {pendingQuiz.year && <span className="tag tag-warning">{pendingQuiz.year} {pendingQuiz.region}</span>}
+            </div>
+            <p className="text-sm leading-relaxed whitespace-pre-line mb-4" style={{ color: 'var(--color-ink)' }}>{pendingQuiz.question}</p>
+            <div className="space-y-2">
+              {pendingQuiz.options.map(option => (
+                <div key={option.label} className="option-btn" style={{ cursor: 'default' }}>
+                  <div className="flex items-start gap-3"><span className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium" style={{ background: 'var(--color-hairline-light)' }}>{option.label}</span><span>{option.text}</span></div>
+                </div>
+              ))}
+            </div>
+          </article>
+        ))}
       </div>
     );
   }
@@ -315,13 +346,13 @@ function QuizSection({ dayId, quizzes }: { dayId: string; quizzes: Quiz[] }) {
           <button onClick={handleRandom} className="p-2 rounded-lg" style={{ color: 'var(--color-ink-muted)' }} title="随机题目">
             <Shuffle size={18} />
           </button>
-          <span className="text-sm" style={{ color: 'var(--color-ink-muted)' }}>{currentIndex + 1} / {quizzes.length}</span>
+          <span className="text-sm" style={{ color: 'var(--color-ink-muted)' }}>{currentIndex + 1} / {availableQuizzes.length}</span>
         </div>
         {quiz.year && <span className="tag tag-primary">{quiz.year} {quiz.region}</span>}
       </div>
 
       <div className="progress-bar mb-4">
-        <div className="progress-bar-fill" style={{ width: `${((currentIndex + 1) / quizzes.length) * 100}%` }} />
+        <div className="progress-bar-fill" style={{ width: `${((currentIndex + 1) / availableQuizzes.length) * 100}%` }} />
       </div>
 
       <div className="card mb-4">
@@ -369,9 +400,9 @@ function QuizSection({ dayId, quizzes }: { dayId: string; quizzes: Quiz[] }) {
           <div className="flex gap-2 w-full">
             <button onClick={handleRetry} className="flex-1 py-3 rounded-xl font-medium btn-ghost" style={{ background: 'var(--color-hairline-light)' }}>重做</button>
             <button onClick={handleNext}
-              className={`flex-1 py-3 rounded-xl font-medium transition-all ${currentIndex >= quizzes.length - 1 ? '' : 'btn-primary'}`}
-              style={currentIndex >= quizzes.length - 1 ? { background: 'var(--color-hairline)', color: 'var(--color-ink-muted)' } : {}}>
-              {currentIndex >= quizzes.length - 1 ? '完成' : '下一题'}
+              className={`flex-1 py-3 rounded-xl font-medium transition-all ${currentIndex >= availableQuizzes.length - 1 ? '' : 'btn-primary'}`}
+              style={currentIndex >= availableQuizzes.length - 1 ? { background: 'var(--color-hairline)', color: 'var(--color-ink-muted)' } : {}}>
+              {currentIndex >= availableQuizzes.length - 1 ? '完成' : '下一题'}
             </button>
           </div>
         )}
@@ -436,6 +467,7 @@ export default function DayPage() {
   const [showBackTop, setShowBackTop] = useState(false);
   const [showPdfModal, setShowPdfModal] = useState(false);
   const [day, setDay] = useState<DayData | undefined>(undefined);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const handler = () => setShowBackTop(window.scrollY > 400);
@@ -445,13 +477,17 @@ export default function DayPage() {
 
   useEffect(() => {
     if (dayId) {
-      getDay(dayId).then(d => setDay(d));
+      getDay(dayId).then(d => setDay(d)).finally(() => setLoading(false));
     }
   }, [dayId]);
 
   useEffect(() => {
     if (day) markDayLearned(day.id);
   }, [day, markDayLearned]);
+
+  if (loading) {
+    return <main className="page-shell"><div className="learning-skeleton"><span /><span /><span /><span /></div></main>;
+  }
 
   if (!day) {
     return (
@@ -466,6 +502,9 @@ export default function DayPage() {
 
   const hasIdioms = day.groups.some(g => g.idioms && g.idioms.length > 0);
   const hasWords = day.groups.some(g => g.words && g.words.length > 0);
+  const totalIdioms = day.groups.reduce((sum, group) => sum + (group.idioms?.length || 0), 0);
+  const totalWords = day.groups.reduce((sum, group) => sum + (group.words?.length || 0), 0);
+  const totalQuizzes = day.quizzes.length;
 
   const filteredGroups = day.groups.map(group => {
     if (typeFilter === 'all') return group;
@@ -475,16 +514,14 @@ export default function DayPage() {
   }).filter(g => (g.idioms && g.idioms.length > 0) || (g.words && g.words.length > 0));
 
   return (
-    <div className="max-w-lg mx-auto px-4 pt-4 min-h-screen animate-fade-in">
+    <main className="page-shell learning-page min-h-screen animate-fade-in">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="learning-header">
         <button onClick={() => navigate('/')} className="flex items-center gap-1 btn-ghost">
           <ArrowLeft size={20} />
           <span className="text-sm">返回</span>
         </button>
-        <h1 className="text-lg font-bold" style={{ color: 'var(--color-ink)', fontFamily: 'var(--fontFamilySerif)' }}>
-          {day.label}
-        </h1>
+        <div className="learning-title"><span>每日精学</span><h1>{day.label}</h1></div>
         <button
           onClick={() => isDesktop ? navigate(`/pdf/${day.id}`) : setShowPdfModal(true)}
           className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
@@ -495,8 +532,15 @@ export default function DayPage() {
         </button>
       </div>
 
+      <section className="learning-overview">
+        <div><span>成语</span><strong>{totalIdioms}</strong></div>
+        <div><span>实词</span><strong>{totalWords}</strong></div>
+        <div><span>练习</span><strong>{totalQuizzes}</strong></div>
+        <p>{day.summary || '先理解词义和使用语境，再通过练习巩固。'}</p>
+      </section>
+
       {/* Tabs */}
-      <div className="flex gap-1 p-1 rounded-xl mb-4" style={{ background: 'var(--color-hairline-light)' }}>
+      <div className="learning-tabs">
         <button
           onClick={() => setActiveTab('notes')}
           className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${
@@ -525,7 +569,7 @@ export default function DayPage() {
 
       {/* Notes Tab */}
       {activeTab === 'notes' && (
-        <div className="space-y-4 pb-20">
+        <div className="learning-content pb-20">
           {/* Type filter */}
           {(hasIdioms && hasWords) && (
             <div className="flex gap-2">
@@ -549,19 +593,9 @@ export default function DayPage() {
             </div>
           )}
 
-          {day.summary && (
-            <div className="p-4 rounded-2xl mb-2" style={{ background: 'linear-gradient(135deg, var(--color-accent-soft) 0%, var(--color-primary-soft) 100%)', border: '1px solid rgba(45, 139, 94, 0.12)' }}>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-base"> </span>
-                <span className="text-sm font-semibold" style={{ color: 'var(--color-accent)' }}>今日学习小结</span>
-              </div>
-              <p className="text-sm leading-relaxed" style={{ color: 'var(--color-ink-secondary)' }}>{day.summary}</p>
-            </div>
-          )}
-
           {filteredGroups.map(group => (
-            <div key={group.id}>
-              <h3 className="text-base font-semibold mb-2" style={{ color: 'var(--color-ink)' }}>{group.name}</h3>
+            <section key={group.id} className="learning-group">
+              <div className="group-heading"><span>{String(filteredGroups.indexOf(group) + 1).padStart(2, '0')}</span><h3>{group.name}</h3><small>{(group.idioms?.length || 0) + (group.words?.length || 0)} 词</small></div>
               <div className="space-y-3">
                 {group.idioms?.map(idiom => (
                   <IdiomCard key={idiom.id} idiom={idiom} dayId={day.id} />
@@ -579,14 +613,14 @@ export default function DayPage() {
                   <p className="text-sm leading-relaxed" style={{ color: 'var(--color-ink-secondary)' }}>{group.summary}</p>
                 </div>
               )}
-            </div>
+            </section>
           ))}
         </div>
       )}
 
       {/* Quiz Tab */}
       {activeTab === 'quiz' && (
-        <div className="pb-20">
+        <div className="quiz-shell pb-20">
           <QuizSection key={day.id} dayId={day.id} quizzes={day.quizzes} />
         </div>
       )}
@@ -606,6 +640,6 @@ export default function DayPage() {
       {showPdfModal && (
         <PdfModal dayId={day.id} onClose={() => setShowPdfModal(false)} />
       )}
-    </div>
+    </main>
   );
 }

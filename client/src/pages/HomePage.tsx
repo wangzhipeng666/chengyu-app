@@ -2,36 +2,46 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { loadDays } from '../data';
-import { Flame, Target, BookOpen, AlertCircle, ChevronRight, CheckCircle } from 'lucide-react';
+import { Flame, Target, BookOpen, AlertCircle, ChevronRight, CheckCircle, Upload, Sparkles } from 'lucide-react';
 import type { DayData } from '../types';
 
 export default function HomePage() {
   const { todayCorrect, todayTotal, streak, wrongQuestions, getDayProgress } = useStore();
   const [days, setDays] = useState<DayData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
 
   useEffect(() => {
-    loadDays().then(d => setDays(d));
+    loadDays()
+      .then(d => setDays(d))
+      .catch(() => setLoadError('学习数据加载失败，请确认服务端已启动'))
+      .finally(() => setLoading(false));
   }, []);
 
   const accuracy = todayTotal > 0 ? Math.round((todayCorrect / todayTotal) * 100) : 0;
 
   return (
-    <div className="max-w-lg mx-auto px-4 pt-6 animate-fade-in">
+    <main className="page-shell home-page animate-fade-in">
       {/* Header */}
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4" style={{ background: 'var(--color-primary-soft)' }}>
-          <span className="text-3xl"> </span>
+      <section className="home-hero">
+        <div className="hero-copy">
+          <div className="eyebrow"><Sparkles size={14} /> 每天积累一点</div>
+          <h1>把高频词语<br />真正变成得分能力</h1>
+          <p>按天精学、随手收藏、错题回练，让复习路径清晰可见。</p>
+          <div className="hero-actions">
+            <Link to={days[0] ? `/day/${days[0].id}` : '/dictionary'} className="btn-primary inline-flex items-center gap-2">
+              <BookOpen size={17} /> 开始学习
+            </Link>
+            <Link to="/import" className="btn-secondary inline-flex items-center gap-2">
+              <Upload size={17} /> 导入新笔记
+            </Link>
+          </div>
         </div>
-        <h1 className="text-2xl font-bold mb-2" style={{ fontFamily: 'var(--fontFamilySerif)', color: 'var(--color-ink)' }}>
-          成语学习助手
-        </h1>
-        <p className="text-sm" style={{ color: 'var(--color-ink-muted)' }}>
-          粉笔千词计划 · 高频成语精讲
-        </p>
-      </div>
+        <div className="hero-seal" aria-hidden="true"><span>成</span><small>日积月累</small></div>
+      </section>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 gap-3 mb-6">
+      <section className="stats-grid">
         <div className="stat-card">
           <div className="stat-card-icon" style={{ background: 'var(--color-primary-soft)' }}>
             <Flame size={20} style={{ color: 'var(--color-primary)' }} />
@@ -55,10 +65,17 @@ export default function HomePage() {
             </div>
           )}
         </div>
-      </div>
+        <div className="stat-card stat-card-wide">
+          <div className="stat-card-icon" style={{ background: 'var(--color-gold-soft)' }}>
+            <BookOpen size={20} style={{ color: 'var(--color-gold)' }} />
+          </div>
+          <div className="stat-card-value">{days.length}<span className="text-sm font-normal" style={{ color: 'var(--color-ink-muted)' }}> 天</span></div>
+          <div className="stat-card-label">已收录课程</div>
+        </div>
+      </section>
 
       {/* Quick Actions */}
-      <div className="space-y-3 mb-6">
+      <section className="quick-grid">
         <Link to="/dictionary" className="card flex items-center gap-4 group">
           <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'var(--color-gold-soft)' }}>
             <BookOpen size={24} style={{ color: 'var(--color-gold)' }} />
@@ -81,14 +98,29 @@ export default function HomePage() {
           </div>
           <ChevronRight size={20} style={{ color: 'var(--color-ink-muted)' }} />
         </Link>
-      </div>
+        <Link to="/import" className="card quick-card flex items-center gap-4 group">
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'var(--color-primary-soft)' }}>
+            <Upload size={24} style={{ color: 'var(--color-primary)' }} />
+          </div>
+          <div className="flex-1">
+            <div className="font-semibold" style={{ color: 'var(--color-ink)' }}>导入新笔记</div>
+            <div className="text-sm" style={{ color: 'var(--color-ink-muted)' }}>上传 PDF，生成下一天内容</div>
+          </div>
+          <ChevronRight size={20} style={{ color: 'var(--color-ink-muted)' }} />
+        </Link>
+      </section>
 
       {/* Day List */}
       <div className="mb-6">
         <h2 className="text-lg font-semibold mb-3" style={{ color: 'var(--color-ink)', fontFamily: 'var(--fontFamilySerif)' }}>
           学习进度
         </h2>
-        <div className="space-y-3">
+        {loadError && <div className="status-banner error"><AlertCircle size={17} /><span>{loadError}</span></div>}
+        {loading ? (
+          <div className="day-grid" aria-label="正在加载学习数据">
+            {[1, 2, 3, 4].map(item => <div key={item} className="card skeleton-card"><span /><span /><span /></div>)}
+          </div>
+        ) : <div className="day-grid">
           {days.map(day => {
             const progress = getDayProgress(day.id);
             const totalIdioms = day.groups?.reduce((sum, g) => sum + (g.idioms?.length || 0), 0) || 0;
@@ -134,8 +166,8 @@ export default function HomePage() {
               </Link>
             );
           })}
-        </div>
+        </div>}
       </div>
-    </div>
+    </main>
   );
 }

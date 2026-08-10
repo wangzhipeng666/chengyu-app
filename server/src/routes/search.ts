@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { getDb } from '../db';
+import { parseIdiom, parseWord, type DbRow } from '../serializers';
 
 const router = Router();
 
@@ -27,13 +28,7 @@ router.get('/', (req, res) => {
       sql += ` AND day_id = ?`;
       params.push(day);
     }
-    idioms = db.prepare(sql).all(...params).map((i: any) => ({
-      ...i,
-      oneLineSummary: i.one_line_summary,
-      collocations: JSON.parse(i.collocations || '[]'),
-      examples: JSON.parse(i.examples || '[]'),
-      synonyms: JSON.parse(i.synonyms || '[]'),
-    }));
+    idioms = (db.prepare(sql).all(...params) as DbRow[]).map(parseIdiom);
   }
 
   if (type !== 'idiom') {
@@ -43,14 +38,7 @@ router.get('/', (req, res) => {
       sql += ` AND day_id = ?`;
       params.push(day);
     }
-    words = db.prepare(sql).all(...params).map((w: any) => ({
-      ...w,
-      oneLineSummary: w.one_line_summary,
-      usageContext: w.usage_context,
-      examples: JSON.parse(w.examples || '[]'),
-      analysisAngles: JSON.parse(w.analysis_angles || '[]'),
-      synonyms: JSON.parse(w.synonyms || '[]'),
-    }));
+    words = (db.prepare(sql).all(...params) as DbRow[]).map(parseWord);
   }
 
   res.json({ idioms, words });

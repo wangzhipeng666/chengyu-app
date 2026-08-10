@@ -23,7 +23,9 @@ function seed() {
   db.exec('DELETE FROM groups');
   db.exec('DELETE FROM days');
 
-  const dayFiles = ['day-1.json', 'day-2.json', 'day-3.json', 'day-4.json', 'day-5.json', 'day-6.json', 'day-7.json', 'day-8.json', 'day-9.json', 'day-10.json', 'day-11.json', 'day-12.json', 'day-13.json', 'day-14.json', 'day-15.json', 'day-16.json', 'day-17.json', 'day-18.json', 'day-19.json'];
+  const dayFiles = fs.readdirSync(DATA_DIR)
+    .filter(file => /^day-\d+\.json$/.test(file))
+    .sort((a, b) => Number(a.match(/\d+/)?.[0] || 0) - Number(b.match(/\d+/)?.[0] || 0));
 
   const insertDay = db.prepare('INSERT INTO days (id, label, date, summary) VALUES (?, ?, ?, ?)');
   const insertGroup = db.prepare('INSERT INTO groups (id, day_id, name, summary) VALUES (?, ?, ?, ?)');

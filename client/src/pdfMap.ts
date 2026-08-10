@@ -1,0 +1,51 @@
+export interface PdfInfo {
+  file: string;
+  title: string;
+}
+
+const TEACHERS: Record<number, string> = {
+  1: '夏雨',
+  2: '姜然',
+  3: '夏雨',
+  4: '夏雨',
+  5: '刘柏衡',
+  6: '辛然',
+  7: '江雅',
+  8: '李玟冰',
+  9: '刘柏衡',
+  10: '辛然',
+  11: '辛然',
+  12: '李玟冰',
+  13: '辛然',
+  14: '辛然',
+  15: '闫洪泉',
+  16: '闫洪泉',
+  17: '闫洪泉',
+  18: '张琳卉',
+  19: '张琳卉',
+  20: '安妮',
+  21: '安妮',
+  22: '司琦',
+  23: '张琳卉',
+  24: '张琳卉',
+  25: '姜然',
+  26: '姜然',
+  27: '姜然',
+  28: '姜然',
+  29: '姜然',
+  30: '姜然',
+  31: '司琦',
+  32: '司琦',
+  33: '司琦',
+  34: '李玟冰',
+};
+
+export const PDF_MAP: Record<string, PdfInfo> = Object.fromEntries(
+  Object.entries(TEACHERS).map(([day, teacher]) => [
+    `day-${day}`,
+    {
+      file: `/pdfs/day${day}.pdf`,
+      title: teacher ? `第${day}天笔记 - ${teacher}` : `第${day}天笔记`,
+    },
+  ])
+);

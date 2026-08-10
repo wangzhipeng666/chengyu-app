@@ -1,6 +1,6 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useDeferredValue, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { Search, Heart, ChevronDown, ChevronUp, BookOpen, ArrowUp } from 'lucide-react';
+import { Search, Heart, ChevronDown, ChevronUp, BookOpen, ArrowUp, X, SlidersHorizontal } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { loadDays } from '../data';
 import type { Idiom, Word, DayData } from '../types';
@@ -32,7 +32,7 @@ function IdiomCard({ idiom, dayId }: { idiom: Idiom; dayId: string }) {
 
   return (
     <div className="idiom-card animate-slide-up">
-      <div className="idiom-card-header" onClick={() => setExpanded(!expanded)}>
+      <div className="idiom-card-header" role="button" tabIndex={0} aria-expanded={expanded} onClick={() => setExpanded(!expanded)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setExpanded(!expanded); } }}>
         <div className="flex-1">
           <div className="flex items-center gap-2">
             <h3 className="text-lg font-bold" style={{ color: 'var(--color-ink)', fontFamily: 'var(--fontFamilySerif)' }}>{idiom.name}</h3>
@@ -80,7 +80,7 @@ function WordCard({ word, dayId }: { word: Word; dayId: string }) {
 
   return (
     <div className="idiom-card animate-slide-up" style={{ borderLeft: '3px solid var(--color-accent)' }}>
-      <div className="idiom-card-header" onClick={() => setExpanded(!expanded)}>
+      <div className="idiom-card-header" role="button" tabIndex={0} aria-expanded={expanded} onClick={() => setExpanded(!expanded)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setExpanded(!expanded); } }}>
         <div className="flex-1">
           <div className="flex items-center gap-2">
             <h3 className="text-lg font-bold" style={{ color: 'var(--color-ink)', fontFamily: 'var(--fontFamilySerif)' }}>{word.name}</h3>
@@ -129,15 +129,40 @@ export default function DictionaryPage() {
   const [showGroupPicker, setShowGroupPicker] = useState(false);
   const [showDayPicker, setShowDayPicker] = useState(false);
   const [daysList, setDaysList] = useState<DayData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [resultLimit, setResultLimit] = useState(60);
+  const deferredSearch = useDeferredValue(search);
+  const toolbarRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    loadDays().then(d => setDaysList(d));
+    loadDays().then(d => setDaysList(d)).finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
     const handler = () => setShowBackTop(window.scrollY > 400);
     window.addEventListener('scroll', handler, { passive: true });
     return () => window.removeEventListener('scroll', handler);
+  }, []);
+
+  useEffect(() => {
+    const closePickers = (event: MouseEvent) => {
+      if (!toolbarRef.current?.contains(event.target as Node)) {
+        setShowDayPicker(false);
+        setShowGroupPicker(false);
+      }
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setShowDayPicker(false);
+        setShowGroupPicker(false);
+      }
+    };
+    document.addEventListener('mousedown', closePickers);
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('mousedown', closePickers);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
   }, []);
 
   const allIdioms = useMemo(
@@ -182,8 +207,8 @@ export default function DictionaryPage() {
       return false;
     });
     if (typeFilter === 'word') return [];
-    if (search.trim()) {
-      const q = search.trim().toLowerCase();
+    if (deferredSearch.trim()) {
+      const q = deferredSearch.trim().toLowerCase();
       result = result.filter(i =>
         i.idiom.name.toLowerCase().includes(q) ||
         i.idiom.meaning.toLowerCase().includes(q) ||
@@ -191,7 +216,7 @@ export default function DictionaryPage() {
       );
     }
     return result;
-  }, [allIdioms, activeDay, activeGroup, search, typeFilter, daysList]);
+  }, [allIdioms, activeDay, activeGroup, deferredSearch, typeFilter, daysList]);
 
   const filteredWords = useMemo(() => {
     let result = allWords;
@@ -205,8 +230,8 @@ export default function DictionaryPage() {
       return false;
     });
     if (typeFilter === 'idiom') return [];
-    if (search.trim()) {
-      const q = search.trim().toLowerCase();
+    if (deferredSearch.trim()) {
+      const q = deferredSearch.trim().toLowerCase();
       result = result.filter(w =>
         w.word.name.toLowerCase().includes(q) ||
         w.word.meaning.toLowerCase().includes(q) ||
@@ -214,27 +239,31 @@ export default function DictionaryPage() {
       );
     }
     return result;
-  }, [allWords, activeDay, activeGroup, search, typeFilter, daysList]);
+  }, [allWords, activeDay, activeGroup, deferredSearch, typeFilter, daysList]);
 
   const hasIdioms = daysList.some(d => d.groups.some(g => g.idioms && g.idioms.length > 0));
   const hasWords = daysList.some(d => d.groups.some(g => g.words && g.words.length > 0));
+  const totalResults = filteredIdioms.length + filteredWords.length;
+  const visibleIdioms = filteredIdioms.slice(0, resultLimit);
+  const visibleWords = filteredWords.slice(0, Math.max(0, resultLimit - visibleIdioms.length));
+  const visibleResults = visibleIdioms.length + visibleWords.length;
 
   return (
-    <div className="max-w-lg mx-auto px-4 pt-6 animate-fade-in">
-      <div className="flex items-center gap-3 mb-4">
+    <main className="page-shell dictionary-page animate-fade-in">
+      <div className="dictionary-heading">
         <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'var(--color-primary-soft)' }}>
           <BookOpen size={20} style={{ color: 'var(--color-primary)' }} />
         </div>
-        <h1 className="text-xl font-bold" style={{ color: 'var(--color-ink)', fontFamily: 'var(--fontFamilySerif)' }}>词典</h1>
+        <div><span>随查随记</span><h1>成语实词库</h1><p>跨天检索全部成语与实词，点击卡片查看完整辨析。</p></div>
       </div>
 
-      {/* Search */}
-      <div className="relative mb-4">
+      <section className="dictionary-toolbar" ref={toolbarRef}>
+      <div className="relative dictionary-search">
         <div className="relative">
           <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--color-ink-muted)' }} />
           <input
             type="text"
-            placeholder="搜索成语或实词..."
+            placeholder="搜索词语、释义或一句话总结…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="input pr-10"
@@ -252,16 +281,20 @@ export default function DictionaryPage() {
               className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full flex items-center justify-center transition-colors"
               style={{ background: 'var(--color-hairline-light)', color: 'var(--color-ink-muted)' }}
             >
-              <span className="text-xs">✕</span>
+              <X size={13} />
             </button>
           )}
         </div>
       </div>
 
+      <div className="filter-label"><SlidersHorizontal size={14} /> 筛选范围</div>
+
       {/* Day Tabs - Collapsible */}
-      <div className="mb-3">
+      <div className="filter-control">
         <button
-          onClick={() => setShowDayPicker(!showDayPicker)}
+          onClick={() => { setShowDayPicker(!showDayPicker); setShowGroupPicker(false); }}
+          aria-expanded={showDayPicker}
+          aria-haspopup="listbox"
           className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-all w-full text-left"
           style={{ background: 'var(--color-canvas-warm)', border: '1px solid var(--color-hairline-light)', color: activeDay !== 'all' ? 'var(--color-primary)' : 'var(--color-ink-secondary)' }}
         >
@@ -270,7 +303,7 @@ export default function DictionaryPage() {
           <ChevronDown size={14} style={{ transform: showDayPicker ? 'rotate(180deg)' : '', transition: 'transform 0.2s' }} />
         </button>
         {showDayPicker && (
-          <div className="mt-2 p-2 rounded-xl grid grid-cols-2 gap-1.5 animate-slide-up" style={{ background: 'var(--color-canvas-card)', border: '1px solid var(--color-hairline-light)', boxShadow: 'var(--shadow-md)' }}>
+          <div className="picker-panel animate-slide-up" role="listbox" aria-label="选择天数">
             <button onClick={() => { setActiveDay('all'); setActiveGroup('all'); setShowDayPicker(false); }}
               className="px-3 py-2 rounded-lg text-xs font-medium text-left transition-all"
               style={{ background: activeDay === 'all' ? 'var(--color-primary)' : 'transparent', color: activeDay === 'all' ? 'white' : 'var(--color-ink-secondary)' }}>
@@ -289,9 +322,11 @@ export default function DictionaryPage() {
 
       {/* Group Filter */}
       {allGroups.length > 1 && (
-        <div className="mb-3">
+        <div className="filter-control">
           <button
-            onClick={() => setShowGroupPicker(!showGroupPicker)}
+            onClick={() => { setShowGroupPicker(!showGroupPicker); setShowDayPicker(false); }}
+            aria-expanded={showGroupPicker}
+            aria-haspopup="listbox"
             className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-all w-full text-left"
             style={{ background: 'var(--color-canvas-warm)', border: '1px solid var(--color-hairline-light)', color: activeGroup !== 'all' ? 'var(--color-accent)' : 'var(--color-ink-secondary)' }}
           >
@@ -300,7 +335,7 @@ export default function DictionaryPage() {
             <ChevronDown size={14} style={{ transform: showGroupPicker ? 'rotate(180deg)' : '', transition: 'transform 0.2s' }} />
           </button>
           {showGroupPicker && (
-            <div className="mt-2 p-2 rounded-xl grid grid-cols-2 gap-1.5 animate-slide-up" style={{ background: 'var(--color-canvas-card)', border: '1px solid var(--color-hairline-light)', boxShadow: 'var(--shadow-md)' }}>
+            <div className="picker-panel animate-slide-up" role="listbox" aria-label="选择分组">
               <button onClick={() => { setActiveGroup('all'); setShowGroupPicker(false); }}
                 className="px-3 py-2 rounded-lg text-xs font-medium text-left transition-all"
                 style={{ background: activeGroup === 'all' ? 'var(--color-accent)' : 'transparent', color: activeGroup === 'all' ? 'white' : 'var(--color-ink-secondary)' }}>
@@ -334,10 +369,13 @@ export default function DictionaryPage() {
           ))}
         </div>
       )}
+      </section>
+
+      <div className="result-summary"><span>{loading ? '正在整理词典…' : `找到 ${totalResults} 个词条`}</span>{deferredSearch && <small>关键词：{deferredSearch}</small>}</div>
 
       {/* Results */}
-      <div className="space-y-3 pb-20">
-        {filteredIdioms.length === 0 && filteredWords.length === 0 ? (
+      <div className="dictionary-results pb-20">
+        {loading ? <div className="dictionary-loading">{[1,2,3,4].map(item => <div key={item} className="card skeleton-card"><span /><span /><span /></div>)}</div> : filteredIdioms.length === 0 && filteredWords.length === 0 ? (
           <div className="text-center py-12">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4" style={{ background: 'var(--color-hairline-light)' }}>
               <Search size={24} style={{ color: 'var(--color-ink-muted)' }} />
@@ -346,12 +384,17 @@ export default function DictionaryPage() {
           </div>
         ) : (
           <>
-            {filteredIdioms.map(item => (
+            {visibleIdioms.map(item => (
               <IdiomCard key={`${item.dayId}-${item.idiom.id}`} idiom={item.idiom} dayId={item.dayId} />
             ))}
-            {filteredWords.map(item => (
+            {visibleWords.map(item => (
               <WordCard key={`${item.dayId}-${item.word.id}`} word={item.word} dayId={item.dayId} />
             ))}
+            {visibleResults < totalResults && (
+              <button className="load-more-card" onClick={() => setResultLimit(limit => limit + 60)}>
+                再显示 60 个 <span>当前 {visibleResults} / {totalResults}</span>
+              </button>
+            )}
           </>
         )}
       </div>
@@ -366,6 +409,6 @@ export default function DictionaryPage() {
           <ArrowUp size={20} />
         </button>
       )}
-    </div>
+    </main>
   );
 }

@@ -1,14 +1,31 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Upload, FileText, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Upload, FileText, Loader2, CheckCircle, AlertCircle, WandSparkles, ShieldCheck } from 'lucide-react';
+import type { DayData } from '../types';
 
-interface DayData {
-  id: string;
-  label: string;
-  date?: string;
-  summary?: string;
-  groups: any[];
-  quizzes: any[];
+interface ExtractResponse {
+  text: string;
+}
+
+interface ParseResponse {
+  dayData: DayData;
+}
+
+interface ErrorResponse {
+  error?: string;
+}
+
+async function getResponseError(response: Response, fallback: string): Promise<string> {
+  try {
+    const data = await response.json() as ErrorResponse;
+    return data.error || fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : '操作失败';
 }
 
 export default function NoteImportPage() {
@@ -17,20 +34,26 @@ export default function NoteImportPage() {
 
   const [step, setStep] = useState<'upload' | 'extract' | 'parse' | 'confirm' | 'done'>('upload');
   const [file, setFile] = useState<File | null>(null);
-  const [dayNumber, setDayNumber] = useState(20);
+  const [dayNumber, setDayNumber] = useState(31);
   const [extractedText, setExtractedText] = useState('');
   const [parsedData, setParsedData] = useState<DayData | null>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [dragging, setDragging] = useState(false);
+
+  const selectFile = (selectedFile?: File) => {
+    if (selectedFile && (selectedFile.type === 'application/pdf' || selectedFile.name.toLowerCase().endsWith('.pdf'))) {
+      setFile(selectedFile);
+      const numberFromName = selectedFile.name.match(/(?:day|第)\s*[-_]?\s*(\d+)/i)?.[1];
+      if (numberFromName) setDayNumber(Number(numberFromName));
+      setError('');
+      return;
+    }
+    setError('请选择 PDF 文件');
+  };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
-    if (selectedFile && selectedFile.type === 'application/pdf') {
-      setFile(selectedFile);
-      setError('');
-    } else {
-      setError('请选择 PDF 文件');
-    }
+    selectFile(e.target.files?.[0]);
   };
 
   const handleExtract = async () => {
@@ -49,14 +72,14 @@ export default function NoteImportPage() {
       });
 
       if (!response.ok) {
-        throw new Error('文本提取失败');
+        throw new Error(await getResponseError(response, '文本提取失败'));
       }
 
-      const data = await response.json();
+      const data = await response.json() as ExtractResponse;
       setExtractedText(data.text);
       setStep('extract');
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -74,14 +97,14 @@ export default function NoteImportPage() {
       });
 
       if (!response.ok) {
-        throw new Error('解析失败');
+        throw new Error(await getResponseError(response, '解析失败'));
       }
 
-      const data = await response.json();
+      const data = await response.json() as ParseResponse;
       setParsedData(data.dayData);
       setStep('parse');
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -101,7 +124,7 @@ export default function NoteImportPage() {
       });
 
       if (!response.ok) {
-        const data = await response.json();
+        const data = await response.json() as ErrorResponse;
         if (data.error && data.error.includes('已存在')) {
           if (confirm('该天数数据已存在，是否覆盖？')) {
             return handleConfirm(true);
@@ -112,9 +135,10 @@ export default function NoteImportPage() {
       }
 
       setStep('done');
-    } catch (err: any) {
-      if (err.message !== '已取消') {
-        setError(err.message);
+    } catch (err) {
+      const message = getErrorMessage(err);
+      if (message !== '已取消') {
+        setError(message);
       }
     } finally {
       setLoading(false);
@@ -130,6 +154,7 @@ export default function NoteImportPage() {
     try {
       const formData = new FormData();
       formData.append('file', file);
+      formData.append('dayNumber', String(dayNumber));
 
       const response = await fetch('/api/notes/upload-pdf', {
         method: 'POST',
@@ -137,31 +162,29 @@ export default function NoteImportPage() {
       });
 
       if (!response.ok) {
-        throw new Error('PDF 上传失败');
+        throw new Error(await getResponseError(response, 'PDF 上传失败'));
       }
 
       alert('PDF 已上传到 public/pdfs/ 目录');
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4 pt-6 animate-fade-in">
+    <main className="page-shell import-page animate-fade-in">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
+      <div className="page-heading">
         <button onClick={() => navigate(-1)} className="btn-ghost p-2">
           <ArrowLeft size={20} />
         </button>
-        <h1 className="text-xl font-bold" style={{ color: 'var(--color-ink)' }}>
-          导入笔记
-        </h1>
+        <div><div className="eyebrow"><WandSparkles size={14} /> PDF 智能整理</div><h1>导入新笔记</h1><p>四步完成文字提取、结构化解析和内容入库。</p></div>
       </div>
 
       {/* Progress Steps */}
-      <div className="flex items-center gap-2 mb-6 text-sm">
+      <div className="import-steps" aria-label="导入进度">
         {['上传', '提取', '解析', '确认'].map((label, i) => {
           const steps = ['upload', 'extract', 'parse', 'confirm', 'done'];
           const currentIdx = steps.indexOf(step);
@@ -169,7 +192,7 @@ export default function NoteImportPage() {
           const isDone = i < currentIdx;
 
           return (
-            <div key={label} className="flex items-center gap-2">
+            <div key={label} className={`import-step ${isActive ? 'active' : ''} ${isDone ? 'done' : ''}`}>
               <div
                 className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium"
                 style={{
@@ -182,7 +205,7 @@ export default function NoteImportPage() {
               <span style={{ color: isActive ? 'var(--color-primary)' : 'var(--color-ink-muted)' }}>
                 {label}
               </span>
-              {i < 3 && <span style={{ color: 'var(--color-ink-muted)' }}>→</span>}
+              {i < 3 && <span className="step-line" />}
             </div>
           );
         })}
@@ -198,16 +221,17 @@ export default function NoteImportPage() {
 
       {/* Step 1: Upload */}
       {step === 'upload' && (
-        <div className="card p-6">
+        <div className="card import-card">
           <div
-            className="border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors"
-            style={{ borderColor: 'var(--color-hairline)' }}
+            className={`drop-zone ${dragging ? 'dragging' : ''}`}
             onClick={() => fileInputRef.current?.click()}
+            onDragOver={(event) => { event.preventDefault(); setDragging(true); }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={(event) => { event.preventDefault(); setDragging(false); selectFile(event.dataTransfer.files[0]); }}
           >
-            <Upload size={32} className="mx-auto mb-3" style={{ color: 'var(--color-ink-muted)' }} />
-            <p className="text-sm" style={{ color: 'var(--color-ink-muted)' }}>
-              点击选择 PDF 文件
-            </p>
+            <div className="drop-zone-icon"><Upload size={26} /></div>
+            <strong>拖入 PDF，或点击选择文件</strong>
+            <p>最大 10 MB；文本型 PDF 效果最佳</p>
             <input
               ref={fileInputRef}
               type="file"
@@ -222,7 +246,7 @@ export default function NoteImportPage() {
               <FileText size={20} style={{ color: 'var(--color-primary)' }} />
               <span className="text-sm flex-1 truncate">{file.name}</span>
               <button
-                onClick={() => setFile(null)}
+                onClick={() => { setFile(null); if (fileInputRef.current) fileInputRef.current.value = ''; }}
                 className="text-sm"
                 style={{ color: 'var(--color-ink-muted)' }}
               >
@@ -245,6 +269,8 @@ export default function NoteImportPage() {
             />
           </div>
 
+          <div className="import-tip"><ShieldCheck size={17} /><span>写入前会展示解析结果，你确认后才会保存。</span></div>
+
           <button
             onClick={handleExtract}
             disabled={!file || loading}
@@ -265,9 +291,7 @@ export default function NoteImportPage() {
       {/* Step 2: Extracted Text */}
       {step === 'extract' && (
         <div className="card p-6">
-          <h2 className="text-lg font-semibold mb-3" style={{ color: 'var(--color-ink)' }}>
-            提取的文本
-          </h2>
+          <div className="section-title-row"><div><h2>检查提取文本</h2><p>可在 AI 解析前修正错字或删除页眉页脚。</p></div><span className="tag tag-primary">{extractedText.length.toLocaleString()} 字符</span></div>
           <textarea
             value={extractedText}
             onChange={(e) => setExtractedText(e.target.value)}
@@ -350,6 +374,6 @@ export default function NoteImportPage() {
           </div>
         </div>
       )}
-    </div>
+    </main>
   );
 }

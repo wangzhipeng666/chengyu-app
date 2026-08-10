@@ -91,7 +91,7 @@
 
   /* 卡片内容区 */
   .idiom-card-content {
-    padding: 0 var(--spacing-xl) var(--spacing-xl);
+    padding: var(--spacing-xl);
   }
 
   /* 统计卡片网格 */
