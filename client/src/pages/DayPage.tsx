@@ -28,6 +28,26 @@ function HighlightText({ text, keyword }: { text: string | { text: string; sourc
   );
 }
 
+function StructuredDetailText({ text }: { text: string }) {
+  const lines = text
+    .replace(/【([^】]+)】/g, '\n$1：')
+    .replace(/(?<!\d)(?=\d+[.、](?:释义|语义|侧重|语境|用法|例句|搭配|感情色彩))/g, '\n')
+    .replace(/(?=（\d+）)/g, '\n')
+    .split('\n')
+    .map(line => line.trim())
+    .filter(Boolean);
+
+  return (
+    <div className="space-y-1.5">
+      {lines.map((line, index) => (
+        <p key={index} className="text-sm leading-relaxed" style={{ color: 'var(--color-ink-secondary)' }}>
+          {line}
+        </p>
+      ))}
+    </div>
+  );
+}
+
 // ============================================
 // 成语卡片
 // ============================================
@@ -82,7 +102,7 @@ function IdiomCard({ idiom, dayId }: { idiom: Idiom; dayId: string }) {
           {idiom.usage && (
             <div>
               <div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>用法</div>
-              <div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{idiom.usage}</div>
+              <StructuredDetailText text={idiom.usage} />
             </div>
           )}
           {idiom.structure && (
@@ -179,7 +199,7 @@ function WordCard({ word, dayId }: { word: Word; dayId: string }) {
           {word.usageContext && (
             <div className="mt-3">
               <div className="text-xs font-medium mb-1" style={{ color: 'var(--color-ink-muted)' }}>使用语境</div>
-              <div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{word.usageContext}</div>
+              <StructuredDetailText text={word.usageContext} />
             </div>
           )}
           {word.examples.length > 0 && (
@@ -198,7 +218,7 @@ function WordCard({ word, dayId }: { word: Word; dayId: string }) {
           {word.notes && (
             <div className="rounded-lg p-3" style={{ background: 'var(--color-error-soft)' }}>
               <div className="text-xs font-medium mb-1" style={{ color: 'var(--color-error)' }}>注意事项</div>
-              <div className="text-sm" style={{ color: 'var(--color-ink-secondary)' }}>{word.notes}</div>
+              <StructuredDetailText text={word.notes} />
             </div>
           )}
           {word.analysisAngles.length > 0 && (
