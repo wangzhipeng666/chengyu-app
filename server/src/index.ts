@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import { getDb } from './db';
+import { seedMissingDays } from './seed';
 import daysRouter from './routes/days';
 import searchRouter from './routes/search';
 import progressRouter from './routes/progress';
@@ -15,6 +16,8 @@ app.use(express.json({ limit: '2mb' }));
 
 // Initialize database
 getDb();
+// 全新环境下自动从 client/src/data 补种缺失天，保证拉取代码后启动即有数据
+seedMissingDays();
 
 // API routes
 app.use('/api/days', daysRouter);

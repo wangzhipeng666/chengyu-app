@@ -37,6 +37,20 @@ check_deps() {
     echo -e "${GREEN}✓ Node.js 已安装${NC}"
 }
 
+# 安装依赖（首次运行时）
+install_deps() {
+    if [ ! -d "$SERVER_DIR/node_modules" ]; then
+        echo -e "${YELLOW}首次运行，正在安装服务端依赖...${NC}"
+        (cd "$SERVER_DIR" && npm install) || { echo -e "${RED}服务端依赖安装失败${NC}"; exit 1; }
+        echo -e "${GREEN}✓ 服务端依赖安装完成${NC}"
+    fi
+    if [ ! -d "$CLIENT_DIR/node_modules" ]; then
+        echo -e "${YELLOW}首次运行，正在安装客户端依赖...${NC}"
+        (cd "$CLIENT_DIR" && npm install) || { echo -e "${RED}客户端依赖安装失败${NC}"; exit 1; }
+        echo -e "${GREEN}✓ 客户端依赖安装完成${NC}"
+    fi
+}
+
 # 启动服务端
 start_server() {
     echo -e "${YELLOW}正在启动服务端...${NC}"
@@ -113,6 +127,7 @@ trap cleanup SIGINT SIGTERM
 
 # 主流程
 check_deps
+install_deps
 start_server || exit 1
 start_client || exit 1
 

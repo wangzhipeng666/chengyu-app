@@ -26,6 +26,30 @@ if %errorlevel% neq 0 (
 )
 echo [OK] Node.js 已安装
 
+REM 首次运行时安装依赖
+if not exist "%SERVER_DIR%\node_modules" (
+    echo 首次运行，正在安装服务端依赖...
+    cd /d "%SERVER_DIR%"
+    call npm install
+    if %errorlevel% neq 0 (
+        echo [错误] 服务端依赖安装失败
+        pause
+        exit /b 1
+    )
+    echo [OK] 服务端依赖安装完成
+)
+if not exist "%CLIENT_DIR%\node_modules" (
+    echo 首次运行，正在安装客户端依赖...
+    cd /d "%CLIENT_DIR%"
+    call npm install
+    if %errorlevel% neq 0 (
+        echo [错误] 客户端依赖安装失败
+        pause
+        exit /b 1
+    )
+    echo [OK] 客户端依赖安装完成
+)
+
 REM 获取本机IP
 for /f "tokens=2 delims=:" %%a in ('ipconfig ^| findstr /i "IPv4" ^| findstr /v "127.0.0.1"') do (
     for /f "tokens=1" %%b in ("%%a") do (
@@ -43,7 +67,6 @@ timeout /t 1 /nobreak >nul
 
 REM 启动服务端
 echo 正在启动服务端...
-cd /d "%SERVER_PORT%"
 cd /d "%SERVER_DIR%"
 start "Server" cmd /c "npm run dev"
 

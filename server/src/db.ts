@@ -1,4 +1,5 @@
 import Database from 'better-sqlite3';
+import fs from 'fs';
 import path from 'path';
 
 const DB_PATH = path.join(__dirname, '../data/chengyu.db');
@@ -7,6 +8,8 @@ let db: Database.Database;
 
 export function getDb(): Database.Database {
   if (!db) {
+    // 全新 clone 时 server/data 目录不存在（被 gitignore），需先创建
+    fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
     db = new Database(DB_PATH);
     db.pragma('journal_mode = DELETE');
     db.pragma('foreign_keys = ON');

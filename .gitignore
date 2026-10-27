@@ -1,4 +1,4 @@
-start.sh
+.DS_Store
 server/uploads/
 server/data/*.db
 server/node_modules/
